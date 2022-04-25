@@ -109,7 +109,7 @@ $url = "https://downloads.dell.com/catalog/$Catalog_Name"
 $url_DDM = "https://www.delldisplaymanager.com/ddmsetup.exe"
 
 # Destation file where all files will stored
-$dest = "C:\Users\sven_riebe\Downloads\"
+$dest = "C:\Dell\SoftwareRepository\"
 
 #Temp Folder for Catalog files
 $Temp_Folder = "C:\Temp"
@@ -159,6 +159,9 @@ function Download-Dell
             # Taking Version number form Title String
             [Version]$App_Folder = ($i.LocalizedProperties.title -split ",")[1]                    
             
+            #Switch to Repository Folder
+            CD $dest\$Appfolder
+
             If ($Software_Version -le $App_Folder)
                 {
                         
@@ -255,9 +258,12 @@ function Download-Weblinks
     Start-BitsTransfer -Source $url_DDM -Destination $Temp_Folder -DisplayName $Display_Manager_FolderName
 
     #Rename File and transfer to dell app repository
-    $DDM_Version = (Get-Item $Temp_Folder\ddmsetup.exe | select -ExpandProperty Versioninfo).ProductVersion
-    Rename-Item -Path $Temp_Folder\ddmsetup.exe -NewName "Dell Display Manager $DDM_Version"
-    $DDM_Name = ((Get-Item $Temp_Folder).GetFiles('Dell*Display*')).Name
+    $DDM_Version = ((Get-Item $Temp_Folder\ddmsetup.exe | select -ExpandProperty Versioninfo).ProductVersion -split" ")[0]
+    $DDM_Name_New = "Dell Display Manager "+$DDM_Version+".exe"
+    $DDM_Name_Old = (Get-Item $Temp_Folder\ddmsetup.exe | select -ExpandProperty Versioninfo).FileName
+    Rename-Item -Path $DDM_Name_Old -NewName $DDM_Name_New -Force
+    #Get renamed file details
+    $DDM_Name = ((Get-Item $Temp_Folder).GetFiles('Dell*Display*')).FileName
 
     #Make subfolder structure and move file
     If ((Test-Path $DDM_Version) -ne "True")
@@ -266,16 +272,18 @@ function Download-Weblinks
         New-Item $DDM_Version -ItemType Directory
         }
     
-    Move-Item $Temp_Folder\$DDM_Name -Destination $dest\$App_Folder_Main\$DDM_Version\$DDM_Name
+    #Source and destiontion string prepare
+    $DDM_Source = $Temp_Folder+"\"+$DDM_Name
+    $DDM_Destination = $dest+"\"+$App_Folder_Main+"\"+$DDM_Version+"\"+$DDM_Name 
+    
+    $DDM_Source
+    $DDM_Destination
+
+    Move-Item $DDM_Source -Destination $DDM_Destination
 
     Return $Value
 
     }
-
-
-
-
-
 
 
 
@@ -285,6 +293,15 @@ If((Test-Path $Temp_Folder) -ne "True")
 
     Write-Output "Folder is not availble will now generate $Temp_Folder"
     New-Item -Path $Temp_Folder -itemType Directory
+
+    }
+
+#Check if $dest is availible, if not it will generate a new folder
+If((Test-Path $dest) -ne "True")
+    {
+
+    Write-Output "Folder is not availble will now generate $dest"
+    New-Item -Path $dest -itemType Directory
 
     }
 
