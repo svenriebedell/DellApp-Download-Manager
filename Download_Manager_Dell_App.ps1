@@ -22,63 +22,83 @@ limitations under the License.
 
 1.0.0   inital version
 
+Knowing Issues
+-   If a app in catalog is changed from published to expired the deletion of this folder be script does not work anymore. 
+    The reason is the function made a preselection and ingnor all expired apps the $App_Folder will be empty for this version 
+    and deletion need to do manual.
+-   DellSDPCatalogPC.CAB has some wrong download links for older software versions like Dell Command Update 4.4. 
+    Please check minimum Version of software from time to time
+
 #>
 
 <#
 .Synopsis
-   This PowerShell is checking the DellSDPCatalogPC.CAB form Https://Downloads.dell.com. This script will generated new folders and downloading Dell Tools in specific Versions direct from the Dell Support Webpage. Older Files will be ignored or if downloaded in the past the fold
-   IMPORTANT: This scipt need a client installation of Dell Trusted Device Agent. https://www.dell.com/support/home/en-us/product-support/product/trusted-device/drivers
+   This PowerShell is checking the DellSDPCatalogPC.CAB form Https://Downloads.dell.com. This script will generated new folders and downloading Dell Tools in specific Versions direct from the Dell Support Webpage. Older Files will be ignored or if downloaded in the past the folder will be delete.
+   IMPORTANT: This scipt need internet connection and https://downloads.dell.com need to be reachable.
    IMPORTANT: This script does not reboot the system to apply or query system.
 .DESCRIPTION
-   Powershell using Microsoft eventlog to check the Security Score and option compliances of Dell Trusted Device Agent. This script need to be upload in Intune Compliance / Script and need a JSON file additional for reporting this value.
+   Powershell is generate a Dell App repository managed by App Name and Version. Software downloads could be enabled by Software.
    
 #>
 
 
 #Select Software for download Value Enabled/Disabled
-$Command_Monitor = "Enabled" #
-$Command_Configure = "Enabled" #
+$Command_Monitor = "Enabled"
+$Command_Configure = "Enabled"
 $Command_Update_Legacy = "Enabled"
 $Command_Update_UWP = "Enabled"
-$Digital_Delivery = "Enabled" #
-$Optimizer = "Enabled" #
-$Power_Manager = "Enabled" #
-$PremierColor = "Enabled" #
+$Digital_Delivery = "Enabled"
+$Optimizer = "Enabled"
+$Power_Manager = "Enabled"
+$PremierColor = "Enabled"
 $RuggedControl_Center = "Enabled"
 $Trusted_Device = "Enabled"
 $Display_Manager = "Enabled"
 
+
 #Deleting outdated Apps Value Y/N
 $Folder_Delete = "Y"
 
-#define oldest version for Download
+#define oldest version you want to Download e.g. 4.4.0 means all Version from 4.4.0 and newer will be downloaded.
 [Version]$Command_Monitor_Version = "10.5.1.114"
 [Version]$Command_Configure_Version = "4.5.0.205"
+[Version]$Command_Update_Legacy_Version = "4.5.0"
+[Version]$Command_Update_UWP_Version = "4.5.0"
 [Version]$Power_Manager_Version = "3.9"
 [Version]$Optimizer_Version = "2.0"
 [Version]$PremierColor_Version = "6.1"
 [Version]$Digital_Delivery_Version = "4.0.92.0"
 [Version]$RuggedControl_Center_Version = "4.3.55.0"
+[Version]$Trusted_Device_Version = "4.0"
+[Version]$Display_Manager_Version = "1.50"
 
 #Environment variables
 
-#Search string for application
+#Search string for application look for best match codes to select your software
 $Command_Monitor_Name = "*Command*Monitor*"
 $Command_Configure_Name = "*Command*Configure*"
+$Command_Update_Legacy_Name = "*Command*Update*"
+$Command_Update_UWP_Name = "*Command*Update*Windows*"
 $Power_Manager_Name = "*Power*Manager*"
 $Optimizer_Name = "Dell Optimizer*"
 $PremierColor_Name = "Dell PremierColor*"
 $Digital_Delivery_Name = "Dell*Digital*Delivery*"
 $RuggedControl_Center_Name = "Dell*Rugged*Control*"
+$Trusted_Device_Name = "not relevant @ the moment*" #not part of Catalog
+$Display_Manager_Name = "not relevant @ the moment*" #not part of Catalog
 
 #Main folder name for application. In these folder later are subfolders with version number
 $Command_Monitor_FolderName = "Dell Command Monitor"
 $Command_Configure_FolderName = "Dell Command Configure"
+$Command_Update_Legacy_FolderName = "Dell Command Update W32"
+$Command_Update_UWP_FolderName = "Dell Command Update UWP"
 $Power_Manager_FolderName = "Dell Power Manager"
 $Optimizer_FolderName = "Dell Optimizer"
 $PremierColor_FolderName = "Dell PremierColor"
 $Digital_Delivery_FolderName = "Dell Digital Deliver"
 $RuggedControl_Center_FolderName = "Dell Rugged Control Center"
+$Trusted_Device_FolderName = "Dell Trusted Device"
+$Display_Manager_FolderName = "Dell Display Manager"
 
 # Catalog CAB Name
 $Catalog_Name = "DellSDPCatalogPC.cab"
@@ -86,7 +106,7 @@ $Catalog_XML = "DellSDPCatalogPC.xml"
 
 # Source URL for Dell Update Catalog for SCCM
 $url = "https://downloads.dell.com/catalog/$Catalog_Name"
-#https://www.delldisplaymanager.com/ddmsetup.exe
+$url_DDM = "https://www.delldisplaymanager.com/ddmsetup.exe"
 
 # Destation file where all files will stored
 $dest = "C:\Users\sven_riebe\Downloads\"
@@ -95,7 +115,7 @@ $dest = "C:\Users\sven_riebe\Downloads\"
 $Temp_Folder = "C:\Temp"
 
 
-# Function for downloading required software
+# Function for downloading required software based on Catalog File
 function Download-Dell 
     {
     
@@ -122,6 +142,16 @@ function Download-Dell
     $Dell_App_Select = $Catalog_DATA.SystemsManagementCatalog.SoftwareDistributionPackage | Where-Object{$_.LocalizedProperties.Title -like "$Software_Name"}
     $Dell_App_Download = $Dell_App_Select | Where-Object {$_.Properties.PublicationState -ne "Expired"}
     
+
+    #Checking Dell Command Update Win32 or UWP App - Deselect not relevant Software first before prepare download
+
+    If ($Software_Name -eq $Command_Update_Legacy_Name)
+        {
+
+        $Dell_App_Download = $Dell_App_Download | Where-Object {$_.LocalizedProperties.Description -notlike "*Universal*"}
+
+        }
+
     
     foreach ($i in $Dell_App_Download)
         {
@@ -142,7 +172,7 @@ function Download-Dell
                     cd $App_Folder
 
                     # download files
-                    Start-BitsTransfer -Source $i.InstallableItem.OriginFile.OriginUri -Destination .\ -DisplayName $i.localizedproperties.title
+                    Start-BitsTransfer -Source $i.InstallableItem.OriginFile.OriginUri -Destination .\ -DisplayName $i.localizedproperties.title -
                     Write-Output $i.localizedproperties.title "was downloaded to machine"
                     cd ..
                     }
@@ -195,6 +225,56 @@ function Download-Dell
     Return $Value
      
     }
+
+
+function Download-Weblinks
+    {
+
+    # Parameter
+    param(
+        [string]$Software_Name,
+        [version]$Software_Version,
+        [string]$App_Folder_Main
+        
+         )
+
+    #Prepare Download struture
+    cd $dest
+    
+    If ((Test-Path $App_Folder_Main) -ne "True")
+        {
+        # generate new main software folder
+        New-Item $App_Folder_Main -ItemType Directory
+        }
+
+    cd $App_Folder_Main
+
+    #Prepare Download Display Manager
+
+    #Download installer from delldisplaymanager.com
+    Start-BitsTransfer -Source $url_DDM -Destination $Temp_Folder -DisplayName $Display_Manager_FolderName
+
+    #Rename File and transfer to dell app repository
+    $DDM_Version = (Get-Item $Temp_Folder\ddmsetup.exe | select -ExpandProperty Versioninfo).ProductVersion
+    Rename-Item -Path $Temp_Folder\ddmsetup.exe -NewName "Dell Display Manager $DDM_Version"
+    $DDM_Name = ((Get-Item $Temp_Folder).GetFiles('Dell*Display*')).Name
+
+    #Make subfolder structure and move file
+    If ((Test-Path $DDM_Version) -ne "True")
+        {
+        # generate new main software folder
+        New-Item $DDM_Version -ItemType Directory
+        }
+    
+    Move-Item $Temp_Folder\$DDM_Name -Destination $dest\$App_Folder_Main\$DDM_Version\$DDM_Name
+
+    Return $Value
+
+    }
+
+
+
+
 
 
 
@@ -256,6 +336,8 @@ expand $Catalog_Name . -f:$Catalog_XML
 [XML]$Catalog_DATA = Get-Content $Catalog_XML
 
 # Section Application Download
+
+# Section for Dell Command Configure
 If ($Command_Configure -eq "Enabled")
     {
 
@@ -268,81 +350,146 @@ Else
     Write-Output "no Dell Command | Configure selected"
     
     }
-    
+
+# Section for Dell Command Monitor    
 If ($Command_Monitor -eq "Enabled")
     {
 
     Download-Dell -Software_Name $Command_Monitor_Name -Software_Version $Command_Monitor_Version -App_Folder_Main $Command_Monitor_FolderName
 
     }
-    Else
+Else
     {
 
     Write-Output "no Dell Command | Monitor selected"
     
     }
 
+# Section for Dell Power Manager
 If ($Power_Manager -eq "Enabled")
     {
 
     Download-Dell -Software_Name $Power_Manager_Name -Software_Version $Power_Manager_Version -App_Folder_Main $Power_Manager_FolderName
 
     }
-    Else
+Else
     {
 
     Write-Output "no Dell Power Manager selected"
     
     }
 
+# Section for Dell Optimizer
 If ($Optimizer -eq "Enabled")
     {
 
     Download-Dell -Software_Name $Optimizer_Name -Software_Version $Optimizer_Version -App_Folder_Main $Optimizer_FolderName
 
     }
-    Else
+Else
     {
 
     Write-Output "no Dell Optimizer selected"
     
     }
 
+# Section for Dell PremierColor
 If ($PremierColor -eq "Enabled")
     {
 
     Download-Dell -Software_Name $PremierColor_Name -Software_Version $PremierColor_Version -App_Folder_Main $PremierColor_FolderName
 
     }
-    Else
+Else
     {
 
     Write-Output "no Dell PremierColor selected"
     
     }
 
+# Section for Dell Digital Delivery
 If ($Digital_Delivery -eq "Enabled")
     {
 
     Download-Dell -Software_Name $Digital_Delivery_Name -Software_Version $Digital_Delivery_Version -App_Folder_Main $Digital_Delivery_FolderName
 
     }
-    Else
+Else
     {
 
     Write-Output "no Dell Digital Delivery selected"
     
     }
 
+
+# Section for Dell Rugged Control Center
 If ($RuggedControl_Center -eq "Enabled")
     {
 
     Download-Dell -Software_Name $RuggedControl_Center_Name -Software_Version $RuggedControl_Center_Version -App_Folder_Main $RuggedControl_Center_FolderName
 
     }
-    Else
+Else
     {
 
-    Write-Output "no Dell Digital Delivery selected"
+    Write-Output "no Dell Rugged Control Center selected"
+    
+    }
+
+
+# Section for Dell Command Update W32 and UWP
+If ($Command_Update_Legacy -eq "Enabled")
+    {
+
+    Download-Dell -Software_Name $Command_Update_Legacy_Name -Software_Version $Command_Update_Legacy_Version -App_Folder_Main $Command_Update_Legacy_FolderName
+
+    }
+Else
+    {
+
+    Write-Output "no Dell Command | Update Win32 selected"
+    
+    }
+
+If ($Command_Update_UWP -eq "Enabled")
+    {
+
+    Download-Dell -Software_Name $Command_Update_UWP_Name -Software_Version $Command_Update_UWP_Version -App_Folder_Main $Command_Update_UWP_FolderName
+
+    }
+Else
+    {
+
+    Write-Output "no Dell Command | Update UWP selected"
+    
+    }
+
+<#Section for Dell Trusted Device
+If ($Trusted_Device -eq "Enabled")
+    {
+
+    Download-Dell -Software_Name $Trusted_Device_Name -Software_Version $Trusted_Device_Version -App_Folder_Main $Trusted_Device_FolderName
+
+    }
+Else
+    {
+
+    Write-Output "no Dell Trusted Device selected"
+    
+    }#>
+
+
+
+#Section for Dell Display Manager
+If ($Display_Manager -eq "Enabled")
+    {
+
+    Download-Weblinks -Software_Name $Display_Manager_Name -Software_Version $Display_Manager_Version -App_Folder_Main $Display_Manager_FolderName
+
+    }
+Else
+    {
+
+    Write-Output "no Dell Display Manager selected"
     
     }
