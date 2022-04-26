@@ -159,12 +159,10 @@ function Download-Dell
             # Taking Version number form Title String
             [Version]$App_Folder = ($i.LocalizedProperties.title -split ",")[1]                    
             
-            #Switch to Repository Folder
-            CD $dest\$Appfolder
-
             If ($Software_Version -le $App_Folder)
                 {
-                        
+                
+                                  
                 # Checking how much files are stored in this folder. If 0 the file will reload again
                 $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | select -ExpandProperty Count
 
@@ -240,7 +238,11 @@ function Download-Weblinks
         [string]$App_Folder_Main
         
          )
-
+    
+    #Prepare Download Display Manager        
+    #Download installer from delldisplaymanager.com
+    Start-BitsTransfer -Source $url_DDM -Destination $Temp_Folder -DisplayName $Display_Manager_FolderName
+    
     #Prepare Download struture
     cd $dest
     
@@ -252,18 +254,14 @@ function Download-Weblinks
 
     cd $App_Folder_Main
 
-    #Prepare Download Display Manager
-
-    #Download installer from delldisplaymanager.com
-    Start-BitsTransfer -Source $url_DDM -Destination $Temp_Folder -DisplayName $Display_Manager_FolderName
-
+    
     #Rename File and transfer to dell app repository
     $DDM_Version = ((Get-Item $Temp_Folder\ddmsetup.exe | select -ExpandProperty Versioninfo).ProductVersion -split" ")[0]
     $DDM_Name_New = "Dell Display Manager "+$DDM_Version+".exe"
     $DDM_Name_Old = (Get-Item $Temp_Folder\ddmsetup.exe | select -ExpandProperty Versioninfo).FileName
     Rename-Item -Path $DDM_Name_Old -NewName $DDM_Name_New -Force
     #Get renamed file details
-    $DDM_Name = ((Get-Item $Temp_Folder).GetFiles('Dell*Display*')).FileName
+    $DDM_Name = ((Get-Item $Temp_Folder).GetFiles('Dell*Display*')).Name
 
     #Make subfolder structure and move file
     If ((Test-Path $DDM_Version) -ne "True")
@@ -277,11 +275,15 @@ function Download-Weblinks
     $DDM_Destination = $dest+"\"+$App_Folder_Main+"\"+$DDM_Version+"\"+$DDM_Name 
     
     $DDM_Source
-    $DDM_Destination
-
+    
     Move-Item $DDM_Source -Destination $DDM_Destination
 
     Return $Value
+
+
+    #Temp für Folder analyse
+    Get-ChildItem -Path $dir -Filter $filter | Sort-Object LastAccessTime -Descending | Select-Object -First 1
+$latest.name
 
     }
 
