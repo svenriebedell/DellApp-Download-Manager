@@ -109,7 +109,7 @@ $url = "https://downloads.dell.com/catalog/$Catalog_Name"
 $url_DDM = "https://www.delldisplaymanager.com/ddmsetup.exe"
 
 # Destation file where all files will stored
-$dest = "C:\Dell\SoftwareRepository\"
+$dest = "C:\Dell\SoftwareRepository"
 
 #Temp Folder for Catalog files
 $Temp_Folder = "C:\Temp"
@@ -173,7 +173,7 @@ function Download-Dell
                     cd $App_Folder
 
                     # download files
-                    Start-BitsTransfer -Source $i.InstallableItem.OriginFile.OriginUri -Destination .\ -DisplayName $i.localizedproperties.title -
+                    Start-BitsTransfer -Source $i.InstallableItem.OriginFile.OriginUri -Destination .\ -DisplayName $i.localizedproperties.title
                     Write-Output $i.localizedproperties.title "was downloaded to machine"
                     cd ..
                     }
