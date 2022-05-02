@@ -239,51 +239,70 @@ function Download-Weblinks
         
          )
     
-    #Prepare Download Display Manager        
-    #Download installer from delldisplaymanager.com
-    Start-BitsTransfer -Source $url_DDM -Destination $Temp_Folder -DisplayName $Display_Manager_FolderName
+    #Prepare Download Display Manager
     
-    #Prepare Download struture
+    #Get folder with newest version
     cd $dest
-    
-    If ((Test-Path $App_Folder_Main) -ne "True")
-        {
-        # generate new main software folder
-        New-Item $App_Folder_Main -ItemType Directory
-        }
-
     cd $App_Folder_Main
+    $DDM_Folder = Get-ChildItem -Directory | sort -Descending name | select -ExpandProperty Name
+
+    #checking file date       
+    [datetime]$DDMFileCheck = Get-ChildItem -Path $DDM_Folder -File | sort -Descending name | select -ExpandProperty LastWriteTime
+    #checking Online Page date
+    $DDMPageCheck = Invoke-WebRequest -Method HEAD -Uri $url_DDM -UseBasicParsing
+    [datetime]$DDMPageDate = $DDMPageCheck.Headers.'Last-Modified'
+
+    If ($DDMPageDate -gt $DDMFileCheck)
+        {
+        
+        #Download installer from delldisplaymanager.com
+        Start-BitsTransfer -Source $url_DDM -Destination $Temp_Folder -DisplayName $Display_Manager_FolderName
+    
+        #Prepare Download struture
+        cd $dest
+    
+        If ((Test-Path $App_Folder_Main) -ne "True")
+            {
+            # generate new main software folder
+            New-Item $App_Folder_Main -ItemType Directory
+            }
+
+        cd $App_Folder_Main
 
     
-    #Rename File and transfer to dell app repository
-    $DDM_Version = ((Get-Item $Temp_Folder\ddmsetup.exe | select -ExpandProperty Versioninfo).ProductVersion -split" ")[0]
-    $DDM_Name_New = "Dell Display Manager "+$DDM_Version+".exe"
-    $DDM_Name_Old = (Get-Item $Temp_Folder\ddmsetup.exe | select -ExpandProperty Versioninfo).FileName
-    Rename-Item -Path $DDM_Name_Old -NewName $DDM_Name_New -Force
-    #Get renamed file details
-    $DDM_Name = ((Get-Item $Temp_Folder).GetFiles('Dell*Display*')).Name
+        #Rename File and transfer to dell app repository
+        $DDM_Version = ((Get-Item $Temp_Folder\ddmsetup.exe | select -ExpandProperty Versioninfo).ProductVersion -split" ")[0]
+        $DDM_Name_New = "Dell Display Manager "+$DDM_Version+".exe"
+        $DDM_Name_Old = (Get-Item $Temp_Folder\ddmsetup.exe | select -ExpandProperty Versioninfo).FileName
+        Rename-Item -Path $DDM_Name_Old -NewName $DDM_Name_New -Force
+        #Get renamed file details
+        $DDM_Name = ((Get-Item $Temp_Folder).GetFiles('Dell*Display*')).Name
 
-    #Make subfolder structure and move file
-    If ((Test-Path $DDM_Version) -ne "True")
+        #Make subfolder structure and move file
+        If ((Test-Path $DDM_Version) -ne "True")
+            {
+            # generate new main software folder
+            New-Item $DDM_Version -ItemType Directory
+            }
+    
+        #Source and destiontion string prepare
+        $DDM_Source = $Temp_Folder+"\"+$DDM_Name
+        $DDM_Destination = $dest+"\"+$App_Folder_Main+"\"+$DDM_Version+"\"+$DDM_Name 
+    
+        #move file to repository   
+        Move-Item $DDM_Source -Destination $DDM_Destination
+
+        }
+    Else
         {
-        # generate new main software folder
-        New-Item $DDM_Version -ItemType Directory
+
+        Write-Output "Dell Display Manager no newer version is online"
+
         }
     
-    #Source and destiontion string prepare
-    $DDM_Source = $Temp_Folder+"\"+$DDM_Name
-    $DDM_Destination = $dest+"\"+$App_Folder_Main+"\"+$DDM_Version+"\"+$DDM_Name 
-    
-    $DDM_Source
-    
-    Move-Item $DDM_Source -Destination $DDM_Destination
+   
 
     Return $Value
-
-
-    #Temp für Folder analyse
-    Get-ChildItem -Path $dir -Filter $filter | Sort-Object LastAccessTime -Descending | Select-Object -First 1
-$latest.name
 
     }
 
