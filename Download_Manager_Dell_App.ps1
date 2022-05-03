@@ -87,7 +87,7 @@ $RuggedControl_Center_Name = "Dell*Rugged*Control*"
 $Trusted_Device_Name = "not relevant @ the moment*" #not part of Catalog
 $Display_Manager_Name = "not relevant @ the moment*" #not part of Catalog
 
-#Main folder name for application. In these folder later are subfolders with version number
+#Main folder name for application. In these folder includes later subfolders with version number
 $Command_Monitor_FolderName = "Dell Command Monitor"
 $Command_Configure_FolderName = "Dell Command Configure"
 $Command_Update_Legacy_FolderName = "Dell Command Update W32"
@@ -243,14 +243,44 @@ function Download-Weblinks
     
     #Get folder with newest version
     cd $dest
-    cd $App_Folder_Main
-    $DDM_Folder = Get-ChildItem -Directory | sort -Descending name | select -ExpandProperty Name
+    
+    If((Test-Path $App_Folder_Main) -ne "True")
+        {
+    
+        # generate new main App Folder
+        New-Item $App_Folder_Main -ItemType Directory
 
-    #checking file date       
-    [datetime]$DDMFileCheck = Get-ChildItem -Path $DDM_Folder -File | sort -Descending name | select -ExpandProperty LastWriteTime
+        }
+        
+    cd $App_Folder_Main
+    
     #checking Online Page date
     $DDMPageCheck = Invoke-WebRequest -Method HEAD -Uri $url_DDM -UseBasicParsing
     [datetime]$DDMPageDate = $DDMPageCheck.Headers.'Last-Modified'
+        
+    #Checking Subfolder looking for the newest Software version folder and select folder name
+    $App_Folder = @(Get-ChildItem -Directory | sort -Descending name | select -ExpandProperty Name)
+
+    # Checking how much files are stored in this folder. If 0 the file will reload again
+    $File_Count = Get-ChildItem -Path $App_Folder[0] -Recurse | Measure-Object | select -ExpandProperty Count
+
+    If ($File_Count -lt 1)
+        {
+
+        # fill var $DDMFileCheck with a date to surpres any script warning. Using webpage date -1 day to secure it will run trought download part.
+        [datetime]$DDMFileCheck = $DDMPageDate.AddDays(-1)
+
+        }
+    
+    Else
+        {
+        
+        #checking file date       
+        [datetime]$DDMFileCheck = Get-ChildItem -Path $App_Folder[0] -File | sort -Descending name | select -ExpandProperty LastWriteTime
+        
+        }
+    
+    
 
     If ($DDMPageDate -gt $DDMFileCheck)
         {
@@ -290,7 +320,7 @@ function Download-Weblinks
         $DDM_Destination = $dest+"\"+$App_Folder_Main+"\"+$DDM_Version+"\"+$DDM_Name 
     
         #move file to repository   
-        Move-Item $DDM_Source -Destination $DDM_Destination
+        Move-Item $DDM_Source -Destination $DDM_Destination -Force
 
         }
     Else
@@ -300,8 +330,45 @@ function Download-Weblinks
 
         }
     
-   
+    #Delete older Version of DDM
 
+    If ($Folder_Delete -match "Y")
+        {
+
+        foreach ($i in $App_Folder)
+            {
+
+            If ($i -lt $DDM_Version)
+
+                {
+
+                Remove-Item $i -Recurse -Force
+                Write-Output "Folder $i is delete now because is outdate Version"
+
+                }
+
+            Else
+                {
+
+                Write-Output "Folder $i is keep alive and still exist"
+
+                }
+
+
+
+            }
+            
+        }
+    Else
+        {
+
+        Write-Output "Value $Folder_Delete is N, no folders will be delete"
+
+        }
+
+                  
+    cd $dest
+    
     Return $Value
 
     }
