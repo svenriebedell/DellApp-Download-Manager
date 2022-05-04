@@ -1,7 +1,7 @@
 ﻿<#
 _author_ = Sven Riebe <sven_riebe@Dell.com>
 _twitter_ = @SvenRiebe
-_version_ = 1.0.0
+_version_ = 1.0.1
 _Dev_Status_ = Test
 Copyright © 2022 Dell Inc. or its subsidiaries. All Rights Reserved.
 
@@ -21,6 +21,7 @@ limitations under the License.
 <#Version Changes
 
 1.0.0   inital version
+1.0.1   Install.XML with Command Line Informations will now saved in Installer directory
 
 Knowing Issues
 -   If a app in catalog is changed from published to expired the deletion of this folder be script does not work anymore. 
@@ -180,20 +181,42 @@ function Download-Dell
                     Write-Output $i.localizedproperties.title "was downloaded to machine"
 
                     #generate a XML with install instructions selected of Dell SCCM catalog file
-                    $xmlInstComm = New-Object System.Xml.XmlTextWriter("Install.xml",$null)
-                    $xmlInstComm.BaseStream = "System.io.filestream"
+                    $xmlInstComm = New-Object System.Xml.XmlTextWriter("$dest\$App_Folder_Main\$App_Folder\Install.xml",$null)
+                    #Formating XML File
                     $xmlInstComm.Formatting = "Indented"
                     $xmlInstComm.Indentation = "1"
                     $xmlInstComm.IndentChar = "`t"
 
+                    #writing datas
                     $xmlInstComm.WriteStartDocument()
-                    $xmlInstComm.WriteStartElement("$i.localizedproperties.title")
+                    $xmlInstComm.WriteStartElement("InstallInformations")
+                    $xmlInstComm.WriteStartElement($i.localizedproperties.title)
+                    $xmlInstComm.WriteStartElement("Command Line Data")
+                    $xmlInstComm.WriteAttributeString("Arguments",$i.InstallableItem.CommandLineInstallerData.Arguments)
+                    $xmlInstComm.WriteAttributeString("DefaultResult",$i.InstallableItem.CommandLineInstallerData.DefaultResult)
+                    $xmlInstComm.WriteAttributeString("RebootByDefault",$i.InstallableItem.CommandLineInstallerData.RebootByDefault)
+                    $xmlInstComm.WriteAttributeString("Program",$i.InstallableItem.CommandLineInstallerData.Program)
+                    $xmlInstComm.WriteEndElement()
+                    $xmlInstComm.WriteStartElement("Package Data")
+                    $xmlInstComm.WriteAttributeString("VendorName",$i.Properties.VendorName)
+                    $xmlInstComm.WriteAttributeString("CreationDate",$i.Properties.CreationDate)
+                    $xmlInstComm.WriteAttributeString("PackageID",$i.Properties.PackageID)
+                    $xmlInstComm.WriteAttributeString("InfoURL",$i.Properties.MoreInfoUrl)
+                    $xmlInstComm.WriteEndElement()
+                    $xmlInstComm.WriteStartElement("Update Data")
+                    $xmlInstComm.WriteAttributeString("Severity",$i.UpdateSpecificData.MsrcSeverity)
+                    $xmlInstComm.WriteAttributeString("DriverID",$i.UpdateSpecificData.KBArticleID)
+                    $xmlInstComm.WriteAttributeString("DownloadLink",$i.InstallableItem.OriginFile.OriginUri)
+                    $xmlInstComm.WriteAttributeString("DownloadLink",$i.InstallableItem.OriginFile.Modified)
+                    $xmlInstComm.WriteEndElement()
+                                 
+                    $xmlInstComm.WriteEndElement()
 
+                    #Close Document and delete buffer
                     $xmlInstComm.WriteEndDocument()
                     $xmlInstComm.Flush()
                     $xmlInstComm.Close()
-
-
+                    
                     cd ..
                     }
                 Else
@@ -340,6 +363,44 @@ function Download-Weblinks
     
         #move file to repository   
         Move-Item $DDM_Source -Destination $DDM_Destination -Force
+
+        
+        #generate a XML with install instructions selected of Dell SCCM catalog file
+        $xmlInstComm = New-Object System.Xml.XmlTextWriter("$dest\$App_Folder_Main\$DDM_Version\Install.xml",$null)
+        #Formating XML File
+        $xmlInstComm.Formatting = "Indented"
+        $xmlInstComm.Indentation = "1"
+        $xmlInstComm.IndentChar = "`t"
+
+        #writing datas
+        $xmlInstComm.WriteStartDocument()
+        $xmlInstComm.WriteStartElement("InstallInformations")
+        $xmlInstComm.WriteStartElement($i.localizedproperties.title)
+        $xmlInstComm.WriteStartElement("Command Line Data")
+        $xmlInstComm.WriteAttributeString("Arguments","/veryslient")
+        $xmlInstComm.WriteAttributeString("DefaultResult","")
+        $xmlInstComm.WriteAttributeString("RebootByDefault","false")
+        $xmlInstComm.WriteAttributeString("Program",$DDM_Name_New)
+        $xmlInstComm.WriteEndElement()
+        $xmlInstComm.WriteStartElement("Package Data")
+        $xmlInstComm.WriteAttributeString("VendorName","Dell Inc.")
+        $xmlInstComm.WriteAttributeString("CreationDate",$DDMFileCheck)
+        $xmlInstComm.WriteAttributeString("PackageID","")
+        $xmlInstComm.WriteAttributeString("InfoURL","https://www.dell.com/support/kbdoc/en-us/000060112/what-is-dell-display-manager?lwp=rt")
+        $xmlInstComm.WriteEndElement()
+        $xmlInstComm.WriteStartElement("Update Data")
+        $xmlInstComm.WriteAttributeString("Severity","")
+        $xmlInstComm.WriteAttributeString("DriverID","")
+        $xmlInstComm.WriteAttributeString("DownloadLink",$url_DDM)
+        $xmlInstComm.WriteAttributeString("Modified",$DDMFileCheck)
+        $xmlInstComm.WriteEndElement()
+                               
+        $xmlInstComm.WriteEndElement()
+        
+        #Close Document and delete buffer
+        $xmlInstComm.WriteEndDocument()
+        $xmlInstComm.Flush()
+        $xmlInstComm.Close()
 
         }
     Else
