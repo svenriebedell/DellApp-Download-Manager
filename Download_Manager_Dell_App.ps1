@@ -1,7 +1,7 @@
 ﻿<#
 _author_ = Sven Riebe <sven_riebe@Dell.com>
 _twitter_ = @SvenRiebe
-_version_ = 1.0.1
+_version_ = 1.0.2
 _Dev_Status_ = Test
 Copyright © 2022 Dell Inc. or its subsidiaries. All Rights Reserved.
 
@@ -22,6 +22,7 @@ limitations under the License.
 
 1.0.0   inital version
 1.0.1   Install.XML with Command Line Informations will now saved in Installer directory
+1.0.2   download_log_date(yyyymmdd).xml loging details
 
 Knowing Issues
 -   If a app in catalog is changed from published to expired the deletion of this folder be script does not work anymore. 
@@ -104,6 +105,9 @@ $Display_Manager_FolderName = "Dell Display Manager"
 # Catalog CAB Name
 $Catalog_Name = "DellSDPCatalogPC.cab"
 $Catalog_XML = "DellSDPCatalogPC.xml"
+
+#Varible for loging
+$date = Get-Date -Format yyyyMMdd
 
 # Source URL for Dell Update Catalog for SCCM
 $url = "https://downloads.dell.com/catalog/$Catalog_Name"
@@ -218,10 +222,26 @@ function Download-Dell
                     $xmlInstComm.Close()
                     
                     cd ..
+                    
+                    #loging informations
+                    $xmlloging.WriteStartElement($i.localizedproperties.title)
+                    $xmlloging.WriteAttributeString("Version",$App_Folder)
+                    $xmlloging.WriteAttributeString("Status","downloaded")
+                    $xmlloging.WriteEndElement()
+                    
+                    
                     }
+                             
                 Else
                     {
                     Write-Output $i.localizedproperties.title "is existing on the machine"
+                    
+                    #loging informations
+                    $xmlloging.WriteStartElement($i.localizedproperties.title)
+                    $xmlloging.WriteAttributeString("Version",$App_Folder)
+                    $xmlloging.WriteAttributeString("Status","exist")
+                    $xmlloging.WriteEndElement()
+
                     }
                 }
             Else
@@ -239,6 +259,12 @@ function Download-Dell
 
                         Remove-Item $App_Folder -Force -Recurse
                         Write-Output $i.localizedproperties.title "is outdated and is now deleted from this device"
+                        
+                        #loging informations
+                        $xmlloging.WriteStartElement($i.localizedproperties.title)
+                        $xmlloging.WriteAttributeString("Version",$App_Folder)
+                        $xmlloging.WriteAttributeString("Status","delete")
+                        $xmlloging.WriteEndElement()
                 
                         }
                 
@@ -246,6 +272,12 @@ function Download-Dell
                         {
                     
                         Write-Output $i.localizedproperties.title "is outdated but file is stored on this machine"
+                        
+                        #loging informations
+                        $xmlloging.WriteStartElement($i.localizedproperties.title)
+                        $xmlloging.WriteAttributeString("Version",$App_Folder)
+                        $xmlloging.WriteAttributeString("Status","outdated/exist")
+                        $xmlloging.WriteEndElement()
                     
                         }
                     
@@ -255,6 +287,13 @@ function Download-Dell
                 Else
                     {
                     Write-Output $i.localizedproperties.title "is outdated and is not downloaded"
+
+                    #loging informations
+                    $xmlloging.WriteStartElement($i.localizedproperties.title)
+                    $xmlloging.WriteAttributeString("Version",$App_Folder)
+                    $xmlloging.WriteAttributeString("Status","outdated/no download")
+                    $xmlloging.WriteEndElement()
+                    
                     }
                              
                   
@@ -329,7 +368,8 @@ function Download-Weblinks
         
         #Download installer from delldisplaymanager.com
         Start-BitsTransfer -Source $url_DDM -Destination $Temp_Folder -DisplayName $Display_Manager_FolderName
-    
+
+            
         #Prepare Download struture
         cd $dest
     
@@ -375,7 +415,7 @@ function Download-Weblinks
         #writing datas
         $xmlInstComm.WriteStartDocument()
         $xmlInstComm.WriteStartElement("InstallInformations")
-        $xmlInstComm.WriteStartElement($i.localizedproperties.title)
+        $xmlInstComm.WriteStartElement($DDM_Name_New)
         $xmlInstComm.WriteStartElement("Command Line Data")
         $xmlInstComm.WriteAttributeString("Arguments","/veryslient")
         $xmlInstComm.WriteAttributeString("DefaultResult","")
@@ -402,11 +442,24 @@ function Download-Weblinks
         $xmlInstComm.Flush()
         $xmlInstComm.Close()
 
+        #loging informations
+        $xmlloging.WriteStartElement($DDM_Name_New)
+        $xmlloging.WriteAttributeString("Version",$DDM_Version)
+        $xmlloging.WriteAttributeString("Status","no download")
+        $xmlloging.WriteEndElement()
+
+
         }
     Else
         {
-
+        
         Write-Output "Dell Display Manager no newer version is online"
+
+        #loging informations
+        $xmlloging.WriteStartElement("Dell Display Manager")
+        $xmlloging.WriteAttributeString("Version",$App_Folder)
+        $xmlloging.WriteAttributeString("Status","no download")
+        $xmlloging.WriteEndElement()
 
         }
     
@@ -454,7 +507,30 @@ function Download-Weblinks
     }
 
 #Prepare XML file for loging
-#$xmlloging = New-Object System.Xml.XmlTextWriter("download_log.xml",$null)
+$logingfilename = $Temp_Folder+"\download_log"+$date+".xml"
+$xmlloging = New-Object System.Xml.XmlTextWriter("$Temp_Folder\download_log_$date.xml",$null) 
+
+#Formating XML File
+$xmlloging.Formatting = "Indented"
+$xmlloging.Indentation = "1"
+$xmlloging.IndentChar = "`t"
+
+#writing datas
+$xmlloging.WriteStartDocument()
+$xmlloging.WriteStartElement("Loging Details")
+$xmlloging.WriteStartElement("Script run details")
+$xmlloging.WriteAttributeString("Start Time",(Get-Date).ToString())
+$xmlloging.WriteEndElement()
+$xmlloging.WriteStartElement("Environment Details")
+$xmlloging.WriteAttributeString("Repository",$dest)
+$xmlloging.WriteAttributeString("Temp Folder",$Temp_Folder)
+$xmlloging.WriteAttributeString("CatalogName",$Catalog_XML)
+$xmlloging.WriteAttributeString("CatalogDate","")
+$xmlloging.WriteEndElement()
+$xmlloging.WriteStartElement("Download Informations")
+
+
+      
 
 
 #Check if $Temp_Folder is availible, if not it will generate a new folder
@@ -679,3 +755,11 @@ Else
     Write-Output "no Dell Display Manager selected"
     
     }
+
+
+#End Loging
+
+#Close Document and delete buffer
+$xmlloging.WriteEndDocument()
+$xmlloging.Flush()
+$xmlloging.Close()
