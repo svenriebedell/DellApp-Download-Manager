@@ -115,6 +115,9 @@ $dest = "C:\Dell\SoftwareRepository"
 $Temp_Folder = "C:\Temp"
 
 
+##################################################################
+# Download functions for Dell Applications
+
 # Function for downloading required software based on Catalog File
 function Download-Dell 
     {
@@ -175,6 +178,22 @@ function Download-Dell
                     # download files
                     Start-BitsTransfer -Source $i.InstallableItem.OriginFile.OriginUri -Destination .\ -DisplayName $i.localizedproperties.title
                     Write-Output $i.localizedproperties.title "was downloaded to machine"
+
+                    #generate a XML with install instructions selected of Dell SCCM catalog file
+                    $xmlInstComm = New-Object System.Xml.XmlTextWriter("Install.xml",$null)
+                    $xmlInstComm.BaseStream = "System.io.filestream"
+                    $xmlInstComm.Formatting = "Indented"
+                    $xmlInstComm.Indentation = "1"
+                    $xmlInstComm.IndentChar = "`t"
+
+                    $xmlInstComm.WriteStartDocument()
+                    $xmlInstComm.WriteStartElement("$i.localizedproperties.title")
+
+                    $xmlInstComm.WriteEndDocument()
+                    $xmlInstComm.Flush()
+                    $xmlInstComm.Close()
+
+
                     cd ..
                     }
                 Else
@@ -227,7 +246,7 @@ function Download-Dell
      
     }
 
-
+# Function for downloading Dell Display Manager from delldisplaymanager.com
 function Download-Weblinks
     {
 
@@ -373,6 +392,8 @@ function Download-Weblinks
 
     }
 
+#Prepare XML file for loging
+#$xmlloging = New-Object System.Xml.XmlTextWriter("download_log.xml",$null)
 
 
 #Check if $Temp_Folder is availible, if not it will generate a new folder
@@ -415,7 +436,6 @@ else
     }
 
 # New Catalog will only download and extract the Catalog if Online version is newer than local version
-
 If ($Catalog_DateOnline -gt $Catalog_DateLocal)
     {
 
@@ -440,8 +460,9 @@ expand $Catalog_Name . -f:$Catalog_XML
 # Transfer XML data to VAR
 [XML]$Catalog_DATA = Get-Content $Catalog_XML
 
-# Section Application Download
 
+######################################
+# Section Application Download
 # Section for Dell Command Configure
 If ($Command_Configure -eq "Enabled")
     {
@@ -582,7 +603,6 @@ Else
     Write-Output "no Dell Trusted Device selected"
     
     }#>
-
 
 
 #Section for Dell Display Manager
