@@ -14,7 +14,7 @@ This tool is for downloading **Dell Tools** and generate a Software Repository w
 - Dell Power Manager
 - Dell PremierColor
 - Dell Rugged Control Center
-- Dell Trusted Device (no yet in place)
+- Dell Trusted Device (no in place yet)
 - Dell Display Manager
 
 **Legal disclaimer: THE INFORMATION IN THIS PUBLICATION IS PROVIDED 'AS-IS.' DELL MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY KIND WITH RESPECT TO THE INFORMATION IN THIS PUBLICATION, AND SPECIFICALLY DISCLAIMS IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.** In no event shall Dell Technologies, its affiliates or suppliers, be liable for any damages whatsoever arising from or related to the information contained herein or actions that you decide to take based thereon, including any direct, indirect, incidental, consequential, loss of business profits or special damages, even if Dell Technologies, its affiliates or suppliers have been advised of the possibility of such damages.
