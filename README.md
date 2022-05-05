@@ -47,8 +47,8 @@ This script is generate or maintaining a Software Repository. The folder structu
 - 2.Subfolder (Application Version)
 
 each 2. Subfolder includes
-- DUP Package (Dell Update Package)/ Installer .exe
-- Install.xml with install parameters for later automations
+- **DUP Package** (Dell Update Package)/ Installer .exe
+- **Install.xml** with install parameters for later automations
 
 
 
