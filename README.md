@@ -47,9 +47,28 @@ This script is generate or maintaining a Software Repository. The folder structu
 - 2.Subfolder (Application Version)
 
 
+
 each 2. Subfolder includes
 - **DUP Package** (Dell Update Package)/ Installer .exe
 - **Install.xml** with install parameters for later automations
+
+
+#### Variables of configuration
+
+**Enable or Disable applications for download** Line 50 - 60
+
+**starting download version equal or newer** Line 67 - 77
+
+**Temp and Repository Folder** Line 119 - 125
+
+#### Logging
+
+The scripts is logging to Temp Folder it shows you when the script has started and which applications are download, existing in Repository or to old for download.
+The file named download_log_YYYYMMDD.XML
+
+#### Archiving
+
+For troubleshouting the old catalog file DellSDPCatalogPC.xml will be stored in a Archiving folder (in Software Repository Folder) if a new catalog will be downloaded.
 
 
 
