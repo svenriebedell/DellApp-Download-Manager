@@ -31,6 +31,7 @@ Knowing Issues
     and deletion need to do manual.
 -   DellSDPCatalogPC.CAB has some wrong download links for older software versions like Dell Command Update 4.4. 
     Please check minimum Version of software from time to time
+-   If you using Version older than 1.0.3 you need to delete the Software Repository to generate Install.XML
 
 #>
 
@@ -198,26 +199,26 @@ function Download-Dell
                     #writing datas
                     $xmlInstComm.WriteStartDocument()
                     $xmlInstComm.WriteStartElement("InstallInformations")
-                    $xmlInstComm.WriteStartElement($i.localizedproperties.title)
-                    $xmlInstComm.WriteStartElement("Command Line Data")
+                    $xmlInstComm.WriteStartElement("Application")
+                    $xmlInstComm.WriteStartElement("CommandLineData")
+                    $xmlInstComm.WriteAttributeString("Name",$i.Localizedproperties.title)
                     $xmlInstComm.WriteAttributeString("Arguments",$i.InstallableItem.CommandLineInstallerData.Arguments)
                     $xmlInstComm.WriteAttributeString("DefaultResult",$i.InstallableItem.CommandLineInstallerData.DefaultResult)
                     $xmlInstComm.WriteAttributeString("RebootByDefault",$i.InstallableItem.CommandLineInstallerData.RebootByDefault)
                     $xmlInstComm.WriteAttributeString("Program",$i.InstallableItem.CommandLineInstallerData.Program)
                     $xmlInstComm.WriteEndElement()
-                    $xmlInstComm.WriteStartElement("Package Data")
+                    $xmlInstComm.WriteStartElement("PackageData")
                     $xmlInstComm.WriteAttributeString("VendorName",$i.Properties.VendorName)
                     $xmlInstComm.WriteAttributeString("CreationDate",$i.Properties.CreationDate)
                     $xmlInstComm.WriteAttributeString("PackageID",$i.Properties.PackageID)
                     $xmlInstComm.WriteAttributeString("InfoURL",$i.Properties.MoreInfoUrl)
                     $xmlInstComm.WriteEndElement()
-                    $xmlInstComm.WriteStartElement("Update Data")
+                    $xmlInstComm.WriteStartElement("UpdateData")
                     $xmlInstComm.WriteAttributeString("Severity",$i.UpdateSpecificData.MsrcSeverity)
                     $xmlInstComm.WriteAttributeString("DriverID",$i.UpdateSpecificData.KBArticleID)
                     $xmlInstComm.WriteAttributeString("DownloadLink",$i.InstallableItem.OriginFile.OriginUri)
-                    $xmlInstComm.WriteAttributeString("DownloadLink",$i.InstallableItem.OriginFile.Modified)
+                    $xmlInstComm.WriteAttributeString("Modified",$i.InstallableItem.OriginFile.Modified)
                     $xmlInstComm.WriteEndElement()
-                                 
                     $xmlInstComm.WriteEndElement()
 
                     #Close Document and delete buffer
@@ -228,12 +229,12 @@ function Download-Dell
                     cd ..
                     
                     #loging informations
-                    $xmlloging.WriteStartElement($i.localizedproperties.title)
+                    $xmlloging.WriteStartElement($App_Folder_Main -replace(" "))
+                    $xmlloging.WriteAttributeString("Name",$i.Localizedproperties.title)
                     $xmlloging.WriteAttributeString("Version",$App_Folder)
                     $xmlloging.WriteAttributeString("Status","downloaded")
                     $xmlloging.WriteEndElement()
-                    
-                    
+                                        
                     }
                              
                 Else
@@ -241,11 +242,12 @@ function Download-Dell
                     Write-Output $i.localizedproperties.title "is existing on the machine"
                     
                     #loging informations
-                    $xmlloging.WriteStartElement($i.localizedproperties.title)
+                    $xmlloging.WriteStartElement("Applications")
+                    $xmlloging.WriteAttributeString("Name",$i.Localizedproperties.title)
                     $xmlloging.WriteAttributeString("Version",$App_Folder)
                     $xmlloging.WriteAttributeString("Status","exist")
                     $xmlloging.WriteEndElement()
-
+                    
                     }
                 }
             Else
@@ -265,11 +267,12 @@ function Download-Dell
                         Write-Output $i.localizedproperties.title "is outdated and is now deleted from this device"
                         
                         #loging informations
-                        $xmlloging.WriteStartElement($i.localizedproperties.title)
+                        $xmlloging.WriteStartElement("Applications")
+                        $xmlloging.WriteAttributeString("Name",$i.Localizedproperties.title)
                         $xmlloging.WriteAttributeString("Version",$App_Folder)
                         $xmlloging.WriteAttributeString("Status","delete")
                         $xmlloging.WriteEndElement()
-                
+                                        
                         }
                 
                     Else
@@ -278,11 +281,12 @@ function Download-Dell
                         Write-Output $i.localizedproperties.title "is outdated but file is stored on this machine"
                         
                         #loging informations
-                        $xmlloging.WriteStartElement($i.localizedproperties.title)
+                        $xmlloging.WriteStartElement("Applications")
+                        $xmlloging.WriteAttributeString("Name",$i.Localizedproperties.title)
                         $xmlloging.WriteAttributeString("Version",$App_Folder)
                         $xmlloging.WriteAttributeString("Status","outdated/exist")
-                        $xmlloging.WriteEndElement()
-                    
+                        $xmlloging.WriteEndElement()                    
+
                         }
                     
 
@@ -293,16 +297,18 @@ function Download-Dell
                     Write-Output $i.localizedproperties.title "is outdated and is not downloaded"
 
                     #loging informations
-                    $xmlloging.WriteStartElement($i.localizedproperties.title)
+                    $xmlloging.WriteStartElement("Applications")
+                    $xmlloging.WriteAttributeString("Name",$i.Localizedproperties.title)
                     $xmlloging.WriteAttributeString("Version",$App_Folder)
                     $xmlloging.WriteAttributeString("Status","outdated/no download")
-                    $xmlloging.WriteEndElement()
-                    
+                    $xmlloging.WriteEndElement()                    
+
                     }
                              
-                  
+                
                 }
 
+                          
         }
 
     
@@ -420,19 +426,19 @@ function Download-Weblinks
         $xmlInstComm.WriteStartDocument()
         $xmlInstComm.WriteStartElement("InstallInformations")
         $xmlInstComm.WriteStartElement($DDM_Name_New)
-        $xmlInstComm.WriteStartElement("Command Line Data")
+        $xmlInstComm.WriteStartElement("CommandLineData")
         $xmlInstComm.WriteAttributeString("Arguments","/verysilent /noupdate")
         $xmlInstComm.WriteAttributeString("DefaultResult","")
         $xmlInstComm.WriteAttributeString("RebootByDefault","false")
         $xmlInstComm.WriteAttributeString("Program",$DDM_Name_New)
         $xmlInstComm.WriteEndElement()
-        $xmlInstComm.WriteStartElement("Package Data")
+        $xmlInstComm.WriteStartElement("PackageData")
         $xmlInstComm.WriteAttributeString("VendorName","Dell Inc.")
         $xmlInstComm.WriteAttributeString("CreationDate",$DDMFileCheck)
         $xmlInstComm.WriteAttributeString("PackageID","")
         $xmlInstComm.WriteAttributeString("InfoURL","https://www.dell.com/support/kbdoc/en-us/000060112/what-is-dell-display-manager?lwp=rt")
         $xmlInstComm.WriteEndElement()
-        $xmlInstComm.WriteStartElement("Update Data")
+        $xmlInstComm.WriteStartElement("UpdateData")
         $xmlInstComm.WriteAttributeString("Severity","")
         $xmlInstComm.WriteAttributeString("DriverID","")
         $xmlInstComm.WriteAttributeString("DownloadLink",$url_DDM)
@@ -449,7 +455,7 @@ function Download-Weblinks
         #loging informations
         $xmlloging.WriteStartElement($DDM_Name_New)
         $xmlloging.WriteAttributeString("Version",$DDM_Version)
-        $xmlloging.WriteAttributeString("Status","no download")
+        $xmlloging.WriteAttributeString("Status","downloaded")
         $xmlloging.WriteEndElement()
 
 
@@ -460,9 +466,10 @@ function Download-Weblinks
         Write-Output "Dell Display Manager no newer version is online"
 
         #loging informations
-        $xmlloging.WriteStartElement("Dell Display Manager")
+        $xmlloging.WriteStartElement("Applications")
+        $xmlloging.WriteAttributeString("Name","Dell Display Manager")
         $xmlloging.WriteAttributeString("Version",$App_Folder)
-        $xmlloging.WriteAttributeString("Status","no download")
+        $xmlloging.WriteAttributeString("Status","exist")
         $xmlloging.WriteEndElement()
 
         }
@@ -482,6 +489,13 @@ function Download-Weblinks
                 Remove-Item $i -Recurse -Force
                 Write-Output "Folder $i is delete now because is outdate Version"
 
+                #loging informations
+                $xmlloging.WriteStartElement("Applications")
+                $xmlloging.WriteAttributeString("Name","Dell Display Manager")
+                $xmlloging.WriteAttributeString("Version",$App_Folder)
+                $xmlloging.WriteAttributeString("Status","delete")
+                $xmlloging.WriteEndElement()
+
                 }
 
             Else
@@ -489,9 +503,15 @@ function Download-Weblinks
 
                 Write-Output "Folder $i is keep alive and still exist"
 
+
                 }
 
-
+                #loging informations
+                $xmlloging.WriteStartElement("Applications")
+                $xmlloging.WriteAttributeString("Name","Dell Display Manager")
+                $xmlloging.WriteAttributeString("Version",$App_Folder)
+                $xmlloging.WriteAttributeString("Status","no deletion")
+                $xmlloging.WriteEndElement()
 
             }
             
@@ -521,13 +541,13 @@ $xmlloging.IndentChar = "`t"
 
 #writing datas header
 $xmlloging.WriteStartDocument()
-$xmlloging.WriteStartElement("Loging Details")
-$xmlloging.WriteStartElement("Script run details")
-$xmlloging.WriteAttributeString("Start Time",(Get-Date).ToString())
+$xmlloging.WriteStartElement("LoggingInformations")
+$xmlloging.WriteStartElement("ScriptRuntime")
+$xmlloging.WriteAttributeString("StartTime",(Get-Date).ToString())
 $xmlloging.WriteEndElement()
-$xmlloging.WriteStartElement("Environment Details")
+$xmlloging.WriteStartElement("Environment")
 $xmlloging.WriteAttributeString("Repository",$dest)
-$xmlloging.WriteAttributeString("Temp Folder",$Temp_Folder)
+$xmlloging.WriteAttributeString("TempFolder",$Temp_Folder)
 $xmlloging.WriteAttributeString("CatalogName",$Catalog_XML)
 $xmlloging.WriteEndElement()
 
@@ -538,7 +558,7 @@ $xmlloging.WriteEndElement()
 
 #Logging informations start section for Folder tests
 
-$xmlloging.WriteStartElement("Folder Check")
+$xmlloging.WriteStartElement("FolderCheck")
 
 #Check if $Temp_Folder is availible, if not it will generate a new folder
 If((Test-Path $Temp_Folder) -ne "True")
@@ -548,18 +568,19 @@ If((Test-Path $Temp_Folder) -ne "True")
     New-Item -Path $Temp_Folder -itemType Directory
 
     #Logging informations
-    $xmlloging.WriteStartElement($Temp_Folder)
-    $xmlloging.WriteAttributeString("Folder created","true")
+    $xmlloging.WriteStartElement("Temp")
+    $xmlloging.WriteAttributeString("Path",$Temp_Folder)
+    $xmlloging.WriteAttributeString("FolderCreated","true")
     $xmlloging.WriteEndElement()
-
-
+    
     }
 Else
     {
 
     #Logging informations
-    $xmlloging.WriteStartElement($Temp_Folder)
-    $xmlloging.WriteAttributeString("Folder created","false")
+    $xmlloging.WriteStartElement("Temp")
+    $xmlloging.WriteAttributeString("Path",$Temp_Folder)
+    $xmlloging.WriteAttributeString("FolderCreated","false")
     $xmlloging.WriteEndElement()
 
     }
@@ -573,8 +594,9 @@ If((Test-Path $dest) -ne "True")
     New-Item -Path $dest -itemType Directory
 
     #Logging informations
-    $xmlloging.WriteStartElement($dest)
-    $xmlloging.WriteAttributeString("Folder created","true")
+    $xmlloging.WriteStartElement("Repository")
+    $xmlloging.WriteAttributeString("Path",$dest)
+    $xmlloging.WriteAttributeString("FolderCreated","true")
     $xmlloging.WriteEndElement()
 
     }
@@ -582,8 +604,9 @@ Else
     {
 
     #Logging informations
-    $xmlloging.WriteStartElement($dest)
-    $xmlloging.WriteAttributeString("Folder created","false")
+    $xmlloging.WriteStartElement("Repository")
+    $xmlloging.WriteAttributeString("Path",$dest)
+    $xmlloging.WriteAttributeString("FolderCreated","false")
     $xmlloging.WriteEndElement()
 
     }
@@ -596,8 +619,9 @@ If((Test-Path $Catalog_Archive) -ne "True")
     New-Item -Path $Catalog_Archive -itemType Directory
 
     #Logging informations
-    $xmlloging.WriteStartElement($Catalog_Archive)
-    $xmlloging.WriteAttributeString("Folder created","true")
+    $xmlloging.WriteStartElement("Archive")
+    $xmlloging.WriteAttributeString("Path",$Catalog_Archive)
+    $xmlloging.WriteAttributeString("FolderCreated","true")
     $xmlloging.WriteEndElement()
 
     }
@@ -605,8 +629,9 @@ Else
     {
 
     #Logging informations
-    $xmlloging.WriteStartElement($Catalog_Archive)
-    $xmlloging.WriteAttributeString("Folder created","false")
+    $xmlloging.WriteStartElement("Archive")
+    $xmlloging.WriteAttributeString("Path",$Catalog_Archive)
+    $xmlloging.WriteAttributeString("FolderCreated","false")
     $xmlloging.WriteEndElement()
 
     }
@@ -646,18 +671,50 @@ If ($Catalog_DateOnline -gt $Catalog_DateLocal)
     Start-BitsTransfer -Source $url -Destination $Temp_Folder -displayname "Download Dell SCCM Catalog"
 
     # Logging Informations
-    $xmlloging.WriteStartElement("Dell Update Catalog")
-    $xmlloging.WriteAttributeString("Downloaded","false")
-    $xmlloging.WriteAttributeString("Date of Catalog",$Catalog_DateLocal)
+    $xmlloging.WriteStartElement("DellUpdateCatalog")
+    $xmlloging.WriteAttributeString("Downloaded","true")
+    $xmlloging.WriteAttributeString("DateCatalog",$Catalog_DateLocal)
     $xmlloging.WriteEndElement()
 
-    #Archiving old Catalog XML to Software Repository Archiving folder
-    #Source and destination string prepare
-    $Archive_Source = $Temp_Folder+"\"+$Catalog_XML
-    $Archive_Destination = $Catalog_Archive+"\"+$date+$Catalog_XML 
     
-    #move file to repository   
-    Move-Item $DDM_Source -Destination $DDM_Destination -Force
+    #checking if XML file exist in $Temp_Folder
+    $Catalog_XML_Check = Test-Path -Path $Temp_Folder\$Catalog_XML
+
+    If ($Catalog_XML_Check -eq "True")
+        {
+
+        #Archiving old Catalog XML to Software Repository Archiving folder
+        #Source and destination string prepare
+        $Archive_Source = $Temp_Folder+"\"+$Catalog_XML
+        $Archive_Destination = $Catalog_Archive+"\"+$date+$Catalog_XML
+
+        #move file to repository   
+        Move-Item $Archive_Source -Destination $Archive_Destination -Force
+
+        # Logging Informations
+        $xmlloging.WriteStartElement("XMLArchive")
+        $xmlloging.WriteAttributeString("Archived","true")
+        $xmlloging.WriteAttributeString("FileName",$Archive_Destination)
+        $xmlloging.WriteAttributeString("Date",$date)
+        $xmlloging.WriteEndElement()
+          
+          
+        }
+    Else
+        {
+
+        Write-Output "$Temp_Folder does not have a file $Catalog_XML" 
+        
+        # Logging Informations
+        $xmlloging.WriteStartElement("XMLArchive")
+        $xmlloging.WriteAttributeString("Archived","false")
+        $xmlloging.WriteAttributeString("FileName","no File")
+        $xmlloging.WriteAttributeString("Date",$date)
+        $xmlloging.WriteEndElement()
+
+
+        }
+            
         
     }
 Else
@@ -666,22 +723,36 @@ Else
     Write-Output "No newer Catalog is availible"
 
     # Logging Informations
-    $xmlloging.WriteStartElement("Dell Update Catalog")
+    $xmlloging.WriteStartElement("DellUpdateCatalog")
     $xmlloging.WriteAttributeString("Downloaded","false")
-    $xmlloging.WriteAttributeString("Date of Catalog",$Catalog_DateLocal)
+    $xmlloging.WriteAttributeString("DateCatalog",$Catalog_DateLocal)
     $xmlloging.WriteEndElement()
         
     }
 
-# Extract Catalog XML-File form existing CAB-File
-# Change directory
-CD $Temp_Folder
+#checking if XML file exist in $Temp_Folder
+$Catalog_XML_Check = Test-Path -Path $Temp_Folder\$Catalog_XML
 
-# Extract DellSDPCatalogPC.xml from CAB-File
-expand $Catalog_Name . -f:$Catalog_XML
+If ($Catalog_XML_Check -eq "True")
+    {
+
+    Write-Output "$Temp_Folder have a file $Catalog_XML"
+
+    }
+Else
+    {
+
+    # Extract Catalog XML-File form existing CAB-File
+    # Change directory
+    CD $Temp_Folder
+
+    # Extract DellSDPCatalogPC.xml from CAB-File
+    expand $Catalog_Name . -f:$Catalog_XML
+
+    }
 
 # Transfer XML data to VAR
-[XML]$Catalog_DATA = Get-Content $Catalog_XML
+[XML]$Catalog_DATA = Get-Content $Temp_Folder\$Catalog_XML
 
 
 ######################################
@@ -689,7 +760,7 @@ expand $Catalog_Name . -f:$Catalog_XML
 # Section for Dell Command Configure
 
 #starting logging sessing for downloads
-$xmlloging.WriteStartElement("Download Informations")
+$xmlloging.WriteStartElement("DownloadInformations")
 
 
 #App Downloading starts here
