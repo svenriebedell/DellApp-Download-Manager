@@ -119,6 +119,9 @@ $dest = "C:\Dell\SoftwareRepository"
 #Temp Folder for Catalog files
 $Temp_Folder = "C:\Temp"
 
+#Archiving Folder for old catalog files
+$Catalog_Archive = $dest+"\Catalog_Archive"
+
 
 ##################################################################
 # Download functions for Dell Applications
@@ -357,7 +360,7 @@ function Download-Weblinks
         {
         
         #checking file date       
-        [datetime]$DDMFileCheck = Get-ChildItem -Path $App_Folder[0] -File | sort -Descending name | select -ExpandProperty LastWriteTime
+        [datetime]$DDMFileCheck = (Get-ChildItem -Path $App_Folder[0] -File | select -ExpandProperty LastWriteTime)[0]
         
         }
     
@@ -417,7 +420,7 @@ function Download-Weblinks
         $xmlInstComm.WriteStartElement("InstallInformations")
         $xmlInstComm.WriteStartElement($DDM_Name_New)
         $xmlInstComm.WriteStartElement("Command Line Data")
-        $xmlInstComm.WriteAttributeString("Arguments","/veryslient")
+        $xmlInstComm.WriteAttributeString("Arguments","/verysilent /noupdate")
         $xmlInstComm.WriteAttributeString("DefaultResult","")
         $xmlInstComm.WriteAttributeString("RebootByDefault","false")
         $xmlInstComm.WriteAttributeString("Program",$DDM_Name_New)
@@ -540,7 +543,23 @@ If((Test-Path $Temp_Folder) -ne "True")
     Write-Output "Folder is not availble will now generate $Temp_Folder"
     New-Item -Path $Temp_Folder -itemType Directory
 
+    #Logging informations
+    $xmlloging.WriteStartElement($Temp_Folder)
+    $xmlloging.WriteAttributeString("Temp Folder created","true")
+    $xmlloging.WriteEndElement()
+
+
     }
+Else
+    {
+
+    #Logging informations
+    $xmlloging.WriteStartElement($Temp_Folder)
+    $xmlloging.WriteAttributeString("Temp Folder created","false")
+    $xmlloging.WriteEndElement()
+
+    }
+
 
 #Check if $dest is availible, if not it will generate a new folder
 If((Test-Path $dest) -ne "True")
@@ -549,7 +568,45 @@ If((Test-Path $dest) -ne "True")
     Write-Output "Folder is not availble will now generate $dest"
     New-Item -Path $dest -itemType Directory
 
+    #Logging informations
+    $xmlloging.WriteStartElement($dest)
+    $xmlloging.WriteAttributeString("Repository Folder created","true")
+    $xmlloging.WriteEndElement()
+
     }
+Else
+    {
+
+    #Logging informations
+    $xmlloging.WriteStartElement($dest)
+    $xmlloging.WriteAttributeString("Repository Folder created","false")
+    $xmlloging.WriteEndElement()
+
+    }
+
+#Check if $Catalog_Archive Folder is availible, if not it will generate a new folder
+If((Test-Path $Catalog_Archive) -ne "True")
+    {
+
+    Write-Output "Folder is not availble will now generate $Catalog_Archive"
+    New-Item -Path $Catalog_Archive -itemType Directory
+
+    #Logging informations
+    $xmlloging.WriteStartElement($Catalog_Archive)
+    $xmlloging.WriteAttributeString("Archive Folder created","true")
+    $xmlloging.WriteEndElement()
+
+    }
+Else
+    {
+
+    #Logging informations
+    $xmlloging.WriteStartElement($Catalog_Archive)
+    $xmlloging.WriteAttributeString("Archive Folder created","false")
+    $xmlloging.WriteEndElement()
+
+    }
+
 
 #Checking if the newest version of catalogs was stored locally
 
@@ -564,11 +621,12 @@ If ((Test-Path $Catalog_Name) -ne "True")
     
     [datetime]$Catalog_DateLocal = $Catalog_DateOnline.AddDays(-1)
 
+    
     }
 else
     {
 
-[datetime]$Catalog_DateLocal = Get-ItemProperty $Catalog_Name | select -ExpandProperty LastWriteTime
+    [datetime]$Catalog_DateLocal = Get-ItemProperty $Catalog_Name | select -ExpandProperty LastWriteTime
 
     }
 
@@ -578,13 +636,27 @@ If ($Catalog_DateOnline -gt $Catalog_DateLocal)
 
     # Download the catalog File newest version
     Start-BitsTransfer -Source $url -Destination $Temp_Folder -displayname "Download Dell SCCM Catalog"
+
+    # Logging Informations
+    $xmlloging.WriteStartElement("Dell Update Catalog")
+    $xmlloging.WriteAttributeString("Downloaded","true")
+    $xmlloging.WriteAttributeString("Date of Catalog",$Catalog_DateOnline)
+    $xmlloging.WriteEndElement()
+
+    #Archiving old Catalog XML to Software Repository Archiving folder
         
     }
 Else
     {
 
     Write-Output "No newer Catalog is availible"
-    
+
+    # Logging Informations
+    $xmlloging.WriteStartElement("Dell Update Catalog")
+    $xmlloging.WriteAttributeString("Downloaded","false")
+    $xmlloging.WriteAttributeString("Date of Catalog",$Catalog_DateLocal)
+    $xmlloging.WriteEndElement()
+        
     }
 
 # Extract Catalog XML-File form existing CAB-File
