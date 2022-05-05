@@ -46,8 +46,6 @@ This script is generate or maintaining a Software Repository. The folder structu
 - 1.Subfolder (Application Name)
 - 2.Subfolder (Application Version)
 
-![image](https://user-images.githubusercontent.com/99394991/166939667-dc33b487-6998-4752-8c8b-aa50c1a5b02a.png)
-
 
 each 2. Subfolder includes
 - DUP Package (Dell Update Package)/ Installer .exe
