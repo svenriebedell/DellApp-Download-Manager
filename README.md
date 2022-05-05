@@ -30,4 +30,25 @@ This script will be used for testing modifications could be have impact of runni
 
 **Please beware the Dell SCCM Update Catalog will be maintained all 14 days so it could be newer versiond of applications are availible by dell.com/support**
 
+## Instructions
+
+#### Applications selections options are availible
+
+- Select downlaod by App
+- Oldes Version for download ( if you want to download older versions als well)
+- automatic deletion of older Apps (if app version is older than wanted)
+
+#### Output
+
+This script is generate or maintaining a Software Repository. The folder structure is:
+
+- Mainfolder (Repository Path)
+- 1. Subfolder (Application Name)
+- 2. Subfolder (Application Version)
+
+each 2. Subfolder includes
+- DUP Package (Dell Update Package)/ Installer .exe
+- Install.xml with install parameters for later automations
+
+
 
