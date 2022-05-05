@@ -1,7 +1,7 @@
 ﻿<#
 _author_ = Sven Riebe <sven_riebe@Dell.com>
 _twitter_ = @SvenRiebe
-_version_ = 1.0.2
+_version_ = 1.0.3
 _Dev_Status_ = Test
 Copyright © 2022 Dell Inc. or its subsidiaries. All Rights Reserved.
 
@@ -23,6 +23,7 @@ limitations under the License.
 1.0.0   inital version
 1.0.1   Install.XML with Command Line Informations will now saved in Installer directory
 1.0.2   download_log_date(yyyymmdd).xml loging details
+1.0.3   Archiving old catalog XML to a Archiving folder if a new catalog will be downloaded
 
 Knowing Issues
 -   If a app in catalog is changed from published to expired the deletion of this folder be script does not work anymore. 
@@ -518,7 +519,7 @@ $xmlloging.Formatting = "Indented"
 $xmlloging.Indentation = "1"
 $xmlloging.IndentChar = "`t"
 
-#writing datas
+#writing datas header
 $xmlloging.WriteStartDocument()
 $xmlloging.WriteStartElement("Loging Details")
 $xmlloging.WriteStartElement("Script run details")
@@ -528,13 +529,16 @@ $xmlloging.WriteStartElement("Environment Details")
 $xmlloging.WriteAttributeString("Repository",$dest)
 $xmlloging.WriteAttributeString("Temp Folder",$Temp_Folder)
 $xmlloging.WriteAttributeString("CatalogName",$Catalog_XML)
-$xmlloging.WriteAttributeString("CatalogDate","")
 $xmlloging.WriteEndElement()
-$xmlloging.WriteStartElement("Download Informations")
 
 
-      
 
+#########################################################################
+#Checking all folders are availibe      
+
+#Logging informations start section for Folder tests
+
+$xmlloging.WriteStartElement("Folder Check")
 
 #Check if $Temp_Folder is availible, if not it will generate a new folder
 If((Test-Path $Temp_Folder) -ne "True")
@@ -545,7 +549,7 @@ If((Test-Path $Temp_Folder) -ne "True")
 
     #Logging informations
     $xmlloging.WriteStartElement($Temp_Folder)
-    $xmlloging.WriteAttributeString("Temp Folder created","true")
+    $xmlloging.WriteAttributeString("Folder created","true")
     $xmlloging.WriteEndElement()
 
 
@@ -555,7 +559,7 @@ Else
 
     #Logging informations
     $xmlloging.WriteStartElement($Temp_Folder)
-    $xmlloging.WriteAttributeString("Temp Folder created","false")
+    $xmlloging.WriteAttributeString("Folder created","false")
     $xmlloging.WriteEndElement()
 
     }
@@ -570,7 +574,7 @@ If((Test-Path $dest) -ne "True")
 
     #Logging informations
     $xmlloging.WriteStartElement($dest)
-    $xmlloging.WriteAttributeString("Repository Folder created","true")
+    $xmlloging.WriteAttributeString("Folder created","true")
     $xmlloging.WriteEndElement()
 
     }
@@ -579,7 +583,7 @@ Else
 
     #Logging informations
     $xmlloging.WriteStartElement($dest)
-    $xmlloging.WriteAttributeString("Repository Folder created","false")
+    $xmlloging.WriteAttributeString("Folder created","false")
     $xmlloging.WriteEndElement()
 
     }
@@ -593,7 +597,7 @@ If((Test-Path $Catalog_Archive) -ne "True")
 
     #Logging informations
     $xmlloging.WriteStartElement($Catalog_Archive)
-    $xmlloging.WriteAttributeString("Archive Folder created","true")
+    $xmlloging.WriteAttributeString("Folder created","true")
     $xmlloging.WriteEndElement()
 
     }
@@ -602,12 +606,16 @@ Else
 
     #Logging informations
     $xmlloging.WriteStartElement($Catalog_Archive)
-    $xmlloging.WriteAttributeString("Archive Folder created","false")
+    $xmlloging.WriteAttributeString("Folder created","false")
     $xmlloging.WriteEndElement()
 
     }
 
+# logging end the folder check section
+$xmlloging.WriteEndElement()
 
+
+##############################################################
 #Checking if the newest version of catalogs was stored locally
 
 # Checking Header of webpage when last-modified of CAB-File
@@ -639,11 +647,17 @@ If ($Catalog_DateOnline -gt $Catalog_DateLocal)
 
     # Logging Informations
     $xmlloging.WriteStartElement("Dell Update Catalog")
-    $xmlloging.WriteAttributeString("Downloaded","true")
-    $xmlloging.WriteAttributeString("Date of Catalog",$Catalog_DateOnline)
+    $xmlloging.WriteAttributeString("Downloaded","false")
+    $xmlloging.WriteAttributeString("Date of Catalog",$Catalog_DateLocal)
     $xmlloging.WriteEndElement()
 
     #Archiving old Catalog XML to Software Repository Archiving folder
+    #Source and destination string prepare
+    $Archive_Source = $Temp_Folder+"\"+$Catalog_XML
+    $Archive_Destination = $Catalog_Archive+"\"+$date+$Catalog_XML 
+    
+    #move file to repository   
+    Move-Item $DDM_Source -Destination $DDM_Destination -Force
         
     }
 Else
@@ -673,6 +687,12 @@ expand $Catalog_Name . -f:$Catalog_XML
 ######################################
 # Section Application Download
 # Section for Dell Command Configure
+
+#starting logging sessing for downloads
+$xmlloging.WriteStartElement("Download Informations")
+
+
+#App Downloading starts here
 If ($Command_Configure -eq "Enabled")
     {
 
