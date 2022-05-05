@@ -229,10 +229,10 @@ function Download-Dell
                     cd ..
                     
                     #loging informations
-                    $xmlloging.WriteStartElement($App_Folder_Main -replace(" "))
+                    $xmlloging.WriteStartElement("Applications")
                     $xmlloging.WriteAttributeString("Name",$i.Localizedproperties.title)
                     $xmlloging.WriteAttributeString("Version",$App_Folder)
-                    $xmlloging.WriteAttributeString("Status","downloaded")
+                    $xmlloging.WriteAttributeString("Status","download")
                     $xmlloging.WriteEndElement()
                                         
                     }
@@ -425,8 +425,9 @@ function Download-Weblinks
         #writing datas
         $xmlInstComm.WriteStartDocument()
         $xmlInstComm.WriteStartElement("InstallInformations")
-        $xmlInstComm.WriteStartElement($DDM_Name_New)
+        $xmlInstComm.WriteStartElement("Application")
         $xmlInstComm.WriteStartElement("CommandLineData")
+        $xmlInstComm.WriteAttributeString("Name",$DDM_Name_New)
         $xmlInstComm.WriteAttributeString("Arguments","/verysilent /noupdate")
         $xmlInstComm.WriteAttributeString("DefaultResult","")
         $xmlInstComm.WriteAttributeString("RebootByDefault","false")
@@ -452,10 +453,12 @@ function Download-Weblinks
         $xmlInstComm.Flush()
         $xmlInstComm.Close()
 
+        
         #loging informations
-        $xmlloging.WriteStartElement($DDM_Name_New)
+        $xmlloging.WriteStartElement("Applications")
+        $xmlloging.WriteAttributeString("Name","Dell Display Manager")
         $xmlloging.WriteAttributeString("Version",$DDM_Version)
-        $xmlloging.WriteAttributeString("Status","downloaded")
+        $xmlloging.WriteAttributeString("Status","download")
         $xmlloging.WriteEndElement()
 
 
