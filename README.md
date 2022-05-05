@@ -43,8 +43,8 @@ This script will be used for testing modifications could be have impact of runni
 This script is generate or maintaining a Software Repository. The folder structure is:
 
 - Mainfolder (Repository Path)
-- 1. Subfolder (Application Name)
-- 2. Subfolder (Application Version)
+- 1.Subfolder (Application Name)
+- 2.Subfolder (Application Version)
 
 each 2. Subfolder includes
 - DUP Package (Dell Update Package)/ Installer .exe
