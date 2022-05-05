@@ -56,10 +56,14 @@ each 2. Subfolder includes
 #### Variables of configuration
 
 **Enable or Disable applications for download** Line 50 - 60
+![image](https://user-images.githubusercontent.com/99394991/166953021-851704f4-4ac3-4cfc-8294-e5852f361032.png)
 
 **starting download version equal or newer** Line 67 - 77
+![image](https://user-images.githubusercontent.com/99394991/166953135-01ba5929-3a78-4398-962d-4952bb4f1ceb.png)
 
 **Temp and Repository Folder** Line 119 - 125
+![image](https://user-images.githubusercontent.com/99394991/166953636-0471f339-56c6-4c92-a41b-9b0cc1ae85cf.png)
+
 
 #### Logging
 
