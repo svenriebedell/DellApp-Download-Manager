@@ -46,7 +46,8 @@ Knowing Issues
 #>
 
 
-#Select Software for download Value Enabled/Disabled
+#Select Software for download. 
+#possible Value: Enabled/Disabled
 $Command_Monitor = "Enabled"
 $Command_Configure = "Enabled"
 $Command_Update_Legacy = "Enabled"
@@ -60,10 +61,12 @@ $Trusted_Device = "Enabled"
 $Display_Manager = "Enabled"
 
 
-#Deleting outdated Apps Value Y/N
+#Deleting outdated Applications
+#possible Value: Y/N
 $Folder_Delete = "Y"
 
 #define oldest version you want to Download e.g. 4.4.0 means all Version from 4.4.0 and newer will be downloaded.
+#possible Value: x.x.x.x
 [Version]$Command_Monitor_Version = "10.5.1.114"
 [Version]$Command_Configure_Version = "4.5.0.205"
 [Version]$Command_Update_Legacy_Version = "4.5.0"
