@@ -46,6 +46,7 @@ This script generates and maintains a Software Repository. The folder structure 
 - 1.Subfolder (Application Name) 
 - 2.Subfolder (Application Version) 
 
+![image](https://user-images.githubusercontent.com/99394991/167096958-5ab43d4a-35ff-4fc5-84b9-aa0cb47f02ea.png)
 
 Each 2.Subfolder includes 
 
