@@ -1,6 +1,6 @@
 # DellApp-Download-Manager 
 
-###Changelog:
+### Changelog:
 1.0.3  First public version
 
 ## Description 
