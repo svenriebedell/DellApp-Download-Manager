@@ -86,7 +86,12 @@ Each 2nd Subfolder includes
  
 ### Logging 
 
-The script is logging to Temp Folder. It will show you It shows you when the script has started and which applications are downloaded, existing in the Repository or too old to download.
+The script is logging to Temp Folder. The logging file will show the following informations:
+
+- Start Time
+- Catalog download (yes or no)
+- Environment (Path, FileNames)
+- Applications availible (download, exist, outdate/no download, outdate/exist, deleted)
 
 ![image](https://user-images.githubusercontent.com/99394991/167092263-e528db19-1307-4b45-ad8a-6d8faa88a12c.png)
 
