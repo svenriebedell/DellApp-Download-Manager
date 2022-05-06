@@ -18,6 +18,7 @@ This tool is for downloading **Dell Tools** and generating a Software Repository
 - Dell Trusted Device (not in place yet) 
 - Dell Display Manager 
 
+
 **Legal disclaimer: THE INFORMATION IN THIS PUBLICATION IS PROVIDED 'AS-IS.' DELL MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY KIND WITH RESPECT TO THE INFORMATION IN THIS PUBLICATION, AND SPECIFICALLY DISCLAIMS IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.** In no event shall Dell Technologies, its affiliates or suppliers, be liable for any damages whatsoever arising from or related to the information contained herein or actions that you decide to take based thereon, including any direct, indirect, incidental, consequential, loss of business profits or special damages, even if Dell Technologies, its affiliates or suppliers have been advised of the possibility of such damages. 
 
 This script will be used for testing modifications that could have impact of running without issues. 
@@ -84,7 +85,7 @@ Each 2nd Subfolder includes
  
 ### Logging 
 
-The script is logging to Temp Folder. It shows you when the script has started and which applications are downloaded, existing in the Repository or too old to download.
+The script is logging to Temp Folder. It will show you It shows you when the script has started and which applications are downloaded, existing in the Repository or too old to download.
 
 ![image](https://user-images.githubusercontent.com/99394991/167092263-e528db19-1307-4b45-ad8a-6d8faa88a12c.png)
 
