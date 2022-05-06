@@ -48,8 +48,13 @@ This script is generated or maintained in a Software Repository. The folder stru
 
 each 2. Subfolder includes 
 
+![image](https://user-images.githubusercontent.com/99394991/167092419-74566301-127b-459a-806a-555d69357734.png)
+
 - **DUP Package** (Dell Update Package)/ Installer .exe 
 - **Install.xml** with install parameters for later automations 
+
+![image](https://user-images.githubusercontent.com/99394991/167092334-32ec0c83-8b2e-47e6-a848-dfea7854f1b1.png)
+
 
 ### Variables of configuration 
 
@@ -65,6 +70,8 @@ each 2. Subfolder includes
 ####**Delete old downloaded Folders** Line 64
 **Notice** works only if Applications is NOT .PublicationsState "Expired" in the catalog
 
+![image](https://user-images.githubusercontent.com/99394991/167091959-ba73bb5c-f32c-40e3-b0ed-8d306c4f3415.png)
+
  
 ####**Temp and Repository Folder** Line 119 - 125 
 
@@ -73,9 +80,18 @@ each 2. Subfolder includes
  
 ### Logging 
 
-The script is logging to Temp Folder. It shows you when the script has started and which applications are downloaded, existing in the Repository or too old to download. 
+The script is logging to Temp Folder. It shows you when the script has started and which applications are downloaded, existing in the Repository or too old to download.
 
-The file named **download_log_YYYYMMDD.XML** 
+![image](https://user-images.githubusercontent.com/99394991/167092263-e528db19-1307-4b45-ad8a-6d8faa88a12c.png)
+
+
+The file named **download_log_YYYYMMDD.XML**
+
+![image](https://user-images.githubusercontent.com/99394991/167092062-b2ebe782-7cce-4288-b41e-bc49f3bef51b.png)
+
 
 ### Archiving 
-For troubleshooting the old catalog file DellSDPCatalogPC.xml will be stored in a Archiving folder (in Software Repository Folder) if a new catalog is downloaded. 
+For troubleshooting the old catalog file DellSDPCatalogPC.xml will be stored in a Archiving folder (in Software Repository Folder) if a new catalog is downloaded.
+
+The file named **YYYYMMDDDellSdpCatalogPC.XML**
+![image](https://user-images.githubusercontent.com/99394991/167093085-77973550-3313-49ff-8c0b-ad91f488ff78.png)
