@@ -60,7 +60,10 @@ each 2. Subfolder includes
  
 ####**starting download version equal or newer** Line 67 - 77 
 
-![image](https://user-images.githubusercontent.com/99394991/166953135-01ba5929-3a78-4398-962d-4952bb4f1ceb.png) 
+![image](https://user-images.githubusercontent.com/99394991/166953135-01ba5929-3a78-4398-962d-4952bb4f1ceb.png)
+
+####**Delete old downloaded Folders** Line 64
+**Notice** works only if Applications is NOT .PublicationsState "Expired" in the catalog
 
  
 ####**Temp and Repository Folder** Line 119 - 125 
