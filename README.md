@@ -29,7 +29,7 @@ This script will be used for testing modifications that could have impact of run
 - Dell SCCM (System Center Configuration Mgr) Update Catalog (DellSDPCatalogPC.cab) 
 - Dell Display Manager Website (delldisplaymanager.com) 
 
-**Please refer to https://www.dell.com/support/kbdoc/en-us/000197092/dell-drivers-and-downloads-update-release-schedule?lang=en for more details about update cadence of the catalog used.
+**Please refer to https://www.dell.com/support/kbdoc/en-us/000197092/dell-drivers-and-downloads-update-release-schedule?lang=en for more details about update cadence of the catalog used.**
 
 ## Instructions 
 
