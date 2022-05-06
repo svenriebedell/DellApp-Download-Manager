@@ -70,6 +70,7 @@ Each 2nd Subfolder includes
 ![image](https://user-images.githubusercontent.com/99394991/166953135-01ba5929-3a78-4398-962d-4952bb4f1ceb.png)
 
 ####**Delete old downloaded Folders** Line 64
+
 **Notice** works only if Applications is NOT .PublicationsState "Expired" in the catalog
 
 ![image](https://user-images.githubusercontent.com/99394991/167091959-ba73bb5c-f32c-40e3-b0ed-8d306c4f3415.png)
