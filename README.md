@@ -71,7 +71,7 @@ Each 2nd Subfolder includes
 
 #### **Delete old downloaded Folders** Line 64
 
-**Notice** works only if Applications is NOT .PublicationsState "Expired" in the catalog
+**Note** works only if Applications is NOT .PublicationsState "Expired" in the catalog
 
 ![image](https://user-images.githubusercontent.com/99394991/167101838-38a4e8f9-8289-46ad-9eab-1210f8fda383.png)
 
