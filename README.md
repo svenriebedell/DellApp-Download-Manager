@@ -65,18 +65,18 @@ Each 2nd Subfolder includes
 ![image](https://user-images.githubusercontent.com/99394991/167098249-7e5005f4-8668-403d-a714-ac3eaeefc5af.png)
 
  
-####**starting download version equal or newer** Line 67 - 77 
+#### **starting download version equal or newer** Line 67 - 77 
 
 ![image](https://user-images.githubusercontent.com/99394991/166953135-01ba5929-3a78-4398-962d-4952bb4f1ceb.png)
 
-####**Delete old downloaded Folders** Line 64
+#### **Delete old downloaded Folders** Line 64
 
 **Notice** works only if Applications is NOT .PublicationsState "Expired" in the catalog
 
-![image](https://user-images.githubusercontent.com/99394991/167091959-ba73bb5c-f32c-40e3-b0ed-8d306c4f3415.png)
+![image](https://user-images.githubusercontent.com/99394991/167101838-38a4e8f9-8289-46ad-9eab-1210f8fda383.png)
 
  
-####**Temp and Repository Folder** Line 119 - 125 
+#### **Temp and Repository Folder** Line 119 - 125 
 
 ![image](https://user-images.githubusercontent.com/99394991/166953636-0471f339-56c6-4c92-a41b-9b0cc1ae85cf.png) 
 
