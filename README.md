@@ -1,8 +1,8 @@
 # DellApp-Download-Manager 
 
-##Descriptiong 
+## Description 
 
-This tool is for downloading **Dell Tools** and generating a Software Repository which could be later used for software packaging or other installation processes. 
+This tool is for downloading **Dell Tools** and generating a Software Repository which could be later used for software packaging or other installation processes. I have written this script to maintaining my Testlab´s for VMware Workspace One and Microsoft Endpoint Manager. My further ideas is to using API´s of Workspace One and Microsoft Endpoint Manager to upload these Applications directly to theses console´s. 
 
 #### Download Supporting following Applications 
 
@@ -29,28 +29,30 @@ This script will be used for testing modifications that could have impact of run
 - Dell SCCM (System Center Configuration Mgr) Update Catalog (DellSDPCatalogPC.cab) 
 - Dell Display Manager Website (delldisplaymanager.com) 
 
-**Please beware the Dell SCCM Update Catalog will be maintained every 14 days (about 2 weeks) so it could be newer version of applications are available by dell.com/support** 
+**Please refer to https://www.dell.com/support/kbdoc/en-us/000197092/dell-drivers-and-downloads-update-release-schedule?lang=en for more details about update cadence of the catalog used.**
 
 ## Instructions 
 
-### Applications selections options are available 
+### Application selection options: 
 
 - Select download by App 
 - Oldest Version for download (if you want to download older versions as well) 
-- automatic deletion of older Apps (if app version is older than wanted) 
+- Automatic deletion of older Apps (if app version is older than wanted) 
 
 ### Output 
-This script is generated or maintained in a Software Repository. The folder structure is: 
+This script generates and maintains a Software Repository. The folder structure is: 
 
 - Main folder (Repository Path) 
-- 1.Subfolder (Application Name) 
-- 2.Subfolder (Application Version) 
+- 1st Subfolder (Application Name) 
+- 2nd Subfolder (Application Version) 
 
-each 2. Subfolder includes 
+![image](https://user-images.githubusercontent.com/99394991/167096958-5ab43d4a-35ff-4fc5-84b9-aa0cb47f02ea.png)
+
+Each 2nd Subfolder includes 
 
 ![image](https://user-images.githubusercontent.com/99394991/167092419-74566301-127b-459a-806a-555d69357734.png)
 
-- **DUP Package** (Dell Update Package)/ Installer .exe 
+- **DUP Package** (Dell Update Package), Installer .exe or MSI 
 - **Install.xml** with install parameters for later automations 
 
 ![image](https://user-images.githubusercontent.com/99394991/167092334-32ec0c83-8b2e-47e6-a848-dfea7854f1b1.png)
@@ -58,24 +60,26 @@ each 2. Subfolder includes
 
 ### Variables of configuration 
 
-####**Enable or Disable applications for download** Line 50 - 60 
+#### **Enable or Disable applications for download** Line 51 - 61
 
-![image](https://user-images.githubusercontent.com/99394991/166953021-851704f4-4ac3-4cfc-8294-e5852f361032.png) 
-
- 
-####**starting download version equal or newer** Line 67 - 77 
-
-![image](https://user-images.githubusercontent.com/99394991/166953135-01ba5929-3a78-4398-962d-4952bb4f1ceb.png)
-
-####**Delete old downloaded Folders** Line 64
-**Notice** works only if Applications is NOT .PublicationsState "Expired" in the catalog
-
-![image](https://user-images.githubusercontent.com/99394991/167091959-ba73bb5c-f32c-40e3-b0ed-8d306c4f3415.png)
+![image](https://user-images.githubusercontent.com/99394991/167098249-7e5005f4-8668-403d-a714-ac3eaeefc5af.png)
 
  
-####**Temp and Repository Folder** Line 119 - 125 
+#### **starting download version equal or newer** Line 70 - 80 
 
-![image](https://user-images.githubusercontent.com/99394991/166953636-0471f339-56c6-4c92-a41b-9b0cc1ae85cf.png) 
+![image](https://user-images.githubusercontent.com/99394991/167102379-c06b727f-660a-49d0-ba1a-6b2788b18fec.png)
+
+#### **Delete old downloaded Folders** Line 64
+
+**Note** works only if Applications is NOT .PublicationsState "Expired" in the catalog
+
+![image](https://user-images.githubusercontent.com/99394991/167101838-38a4e8f9-8289-46ad-9eab-1210f8fda383.png)
+
+ 
+#### **Temp and Repository Folder** Line 122 - 128 
+
+![image](https://user-images.githubusercontent.com/99394991/167102887-c14eaf50-bb64-438e-a25f-be40af893283.png)
+ 
 
  
 ### Logging 
