@@ -90,7 +90,7 @@ The script is logging to Temp Folder. The logging file will show the following i
 
 - Start Time
 - Catalog download (yes or no)
-- Environment (Path, FileNames)
+- Environment (Path (exist/create, Filename)
 - Applications available (download, exist, outdate/no download, outdate/exist, deleted)
 
 ![image](https://user-images.githubusercontent.com/99394991/167110860-3c732b22-60f0-4158-ab59-dfe159277de2.png)
