@@ -60,9 +60,9 @@ Each 2nd Subfolder includes
 
 ### Variables of configuration 
 
-####**Enable or Disable applications for download** Line 50 - 60 
+####**Enable or Disable applications for download** Line 51 - 61
 
-![image](https://user-images.githubusercontent.com/99394991/166953021-851704f4-4ac3-4cfc-8294-e5852f361032.png) 
+![image](https://user-images.githubusercontent.com/99394991/167098249-7e5005f4-8668-403d-a714-ac3eaeefc5af.png)
 
  
 ####**starting download version equal or newer** Line 67 - 77 
