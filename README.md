@@ -43,12 +43,12 @@ This script will be used for testing modifications that could have impact of run
 This script generates and maintains a Software Repository. The folder structure is: 
 
 - Main folder (Repository Path) 
-- 1.Subfolder (Application Name) 
-- 2.Subfolder (Application Version) 
+- 1st Subfolder (Application Name) 
+- 2nd Subfolder (Application Version) 
 
 ![image](https://user-images.githubusercontent.com/99394991/167096958-5ab43d4a-35ff-4fc5-84b9-aa0cb47f02ea.png)
 
-Each 2.Subfolder includes 
+Each 2nd Subfolder includes 
 
 ![image](https://user-images.githubusercontent.com/99394991/167092419-74566301-127b-459a-806a-555d69357734.png)
 
