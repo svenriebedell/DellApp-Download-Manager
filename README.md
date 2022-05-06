@@ -52,7 +52,7 @@ Each 2nd Subfolder includes
 
 ![image](https://user-images.githubusercontent.com/99394991/167092419-74566301-127b-459a-806a-555d69357734.png)
 
-- **DUP Package** (Dell Update Package)/ Installer .exe 
+- **DUP Package** (Dell Update Package), Installer .exe or MSI 
 - **Install.xml** with install parameters for later automations 
 
 ![image](https://user-images.githubusercontent.com/99394991/167092334-32ec0c83-8b2e-47e6-a848-dfea7854f1b1.png)
