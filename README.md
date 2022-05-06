@@ -40,13 +40,14 @@ This script will be used for testing modifications that could have impact of run
 - Automatic deletion of older Apps (if app version is older than wanted) 
 
 ### Output 
-This script is generated and maintained a Software Repository. The folder structure is: 
+This script generates and maintains a Software Repository. The folder structure is: 
 
 - Main folder (Repository Path) 
 - 1.Subfolder (Application Name) 
 - 2.Subfolder (Application Version) 
 
-each 2. Subfolder includes 
+
+Each 2.Subfolder includes 
 
 ![image](https://user-images.githubusercontent.com/99394991/167092419-74566301-127b-459a-806a-555d69357734.png)
 
