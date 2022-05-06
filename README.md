@@ -89,7 +89,7 @@ Each 2nd Subfolder includes
 The script is logging to Temp Folder. The logging file will show the following informations:
 
 - Start Time
-- Catalog download (yes or no)
+- Catalog download (false or true)
 - Environment (Path (exist/create, Filename)
 - Applications available (download, exist, outdate/no download, outdate/exist, deleted)
 
