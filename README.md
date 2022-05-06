@@ -93,7 +93,7 @@ The script is logging to Temp Folder. The logging file will show the following i
 - Environment (Path, FileNames)
 - Applications availible (download, exist, outdate/no download, outdate/exist, deleted)
 
-![image](https://user-images.githubusercontent.com/99394991/167092263-e528db19-1307-4b45-ad8a-6d8faa88a12c.png)
+![image](https://user-images.githubusercontent.com/99394991/167110860-3c732b22-60f0-4158-ab59-dfe159277de2.png)
 
 
 The file named **download_log_YYYYMMDD.XML**
