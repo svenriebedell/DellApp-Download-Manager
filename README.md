@@ -33,11 +33,11 @@ This script will be used for testing modifications that could have impact of run
 
 ## Instructions 
 
-### Applications selections options are available 
+### Application selection options: 
 
 - Select download by App 
 - Oldest Version for download (if you want to download older versions as well) 
-- automatic deletion of older Apps (if app version is older than wanted) 
+- Automatic deletion of older Apps (if app version is older than wanted) 
 
 ### Output 
 This script is generated and maintained a Software Repository. The folder structure is: 
