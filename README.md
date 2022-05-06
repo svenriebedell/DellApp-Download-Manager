@@ -29,7 +29,7 @@ This script will be used for testing modifications that could have impact of run
 - Dell SCCM (System Center Configuration Mgr) Update Catalog (DellSDPCatalogPC.cab) 
 - Dell Display Manager Website (delldisplaymanager.com) 
 
-**Please beware the Dell SCCM Update Catalog will be maintained every 14 days (about 2 weeks) so it could be newer version of applications are available by dell.com/support** 
+**Please refer to https://www.dell.com/support/kbdoc/en-us/000197092/dell-drivers-and-downloads-update-release-schedule?lang=en for more details about update cadence of the catalog used.
 
 ## Instructions 
 
@@ -40,7 +40,7 @@ This script will be used for testing modifications that could have impact of run
 - automatic deletion of older Apps (if app version is older than wanted) 
 
 ### Output 
-This script is generated or maintained in a Software Repository. The folder structure is: 
+This script is generated and maintained a Software Repository. The folder structure is: 
 
 - Main folder (Repository Path) 
 - 1.Subfolder (Application Name) 
