@@ -72,10 +72,11 @@ Each 2nd Subfolder includes
 
 #### **Delete old downloaded Folders** Line 64
 
-**Note** works only if Application is NOT .PublicationsState "Expired" in the catalog
-
 ![image](https://user-images.githubusercontent.com/99394991/167101838-38a4e8f9-8289-46ad-9eab-1210f8fda383.png)
 
+**Note** works only if Application is NOT .PublicationsState "Expired" in the catalog
+
+![image](https://user-images.githubusercontent.com/99394991/167109524-ef6b66a3-1da3-4619-91d6-0082f8320e81.png)
  
 #### **Temp and Repository Folder** Line 122 - 128 
 
