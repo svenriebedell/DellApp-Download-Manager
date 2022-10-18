@@ -2,6 +2,7 @@
 
 ### Changelog:
 1.0.3  First public version
+1.1.0 Supporting now Trusted Device Agent and new Dell Display Manager for download by dell.com/support
 
 ## Description 
 
