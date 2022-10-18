@@ -69,27 +69,33 @@ Each 2nd Subfolder includes
 
 ### Variables of configuration 
 
-#### **Enable or Disable applications for download** Line 51 - 61
+#### **Enable or Disable applications for download** Line 53 - 70
 
-![image](https://user-images.githubusercontent.com/99394991/167098249-7e5005f4-8668-403d-a714-ac3eaeefc5af.png)
+![image](https://user-images.githubusercontent.com/99394991/196470153-7456e23e-93eb-4f15-9791-4c9c83bfc52e.png)
 
  
-#### **starting download version equal or newer** Line 70 - 80 
+#### **starting download version equal or newer** Line 90 - 100 
 
-![image](https://user-images.githubusercontent.com/99394991/167102379-c06b727f-660a-49d0-ba1a-6b2788b18fec.png)
+![image](https://user-images.githubusercontent.com/99394991/196470464-7e2ece5a-f113-4c28-a8f9-7f897fa0c7ec.png)
 
-#### **Delete old downloaded Folders** Line 64
 
-![image](https://user-images.githubusercontent.com/99394991/167101838-38a4e8f9-8289-46ad-9eab-1210f8fda383.png)
+#### **Delete old downloaded Folders** Line 79
+
+![image](https://user-images.githubusercontent.com/99394991/196470405-fdb2eeae-552b-4450-9688-b2f502ec1228.png)
+
 
 **Note** works only if Application is NOT .PublicationsState "Expired" in the catalog
 
 ![image](https://user-images.githubusercontent.com/99394991/167109524-ef6b66a3-1da3-4619-91d6-0082f8320e81.png)
  
-#### **Temp and Repository Folder** Line 122 - 128 
+#### **Temp and Repository Folder** Line 155 - 157 
 
-![image](https://user-images.githubusercontent.com/99394991/167102887-c14eaf50-bb64-438e-a25f-be40af893283.png)
- 
+![image](https://user-images.githubusercontent.com/99394991/196470768-ad04e6cf-58f9-4f91-addf-94c9a7fa1ae1.png)
+
+#### **Website for Download Trusted Device and Display Manager 2.x** line 148 - 150
+
+![image](https://user-images.githubusercontent.com/99394991/196471174-89a22c75-5519-479e-936a-cb27f6c005aa.png)
+
 
  
 ### Logging 
