@@ -215,7 +215,7 @@ function Download-Dell
                 
                                   
                 # Checking how much files are stored in this folder. If 0 the file will reload again
-                $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | select -ExpandProperty Count
+                $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | Select-Object -ExpandProperty Count
 
                 if ($File_Count -lt 1)
                     {
@@ -292,7 +292,7 @@ function Download-Dell
                 {
                 
                 # Checking how much files are stored in this folder. If 0 the file will reload again
-                $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | select -ExpandProperty Count
+                $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | Select-Object -ExpandProperty Count
 
                 if ($File_Count -ge 1)
                     {
@@ -405,7 +405,7 @@ function download-delltool
         }
 
     ### select Download-Path inforamtion
-    $downloadTemp = $ieauto.Document.IHTMLDocument3_getElementsByTagName('a') | select href -Unique | Select-String $FileName | Select-String "dl.dell.com"
+    $downloadTemp = $ieauto.Document.IHTMLDocument3_getElementsByTagName('a') | Select-Object href -Unique | Select-String $FileName | Select-String "dl.dell.com"
     
     ### Cuting data to Download-Path
     $downloadTemp = $downloadTemp.ToString()
@@ -436,7 +436,7 @@ function download-delltool
         cd $AppVersionDownload
 
         # Checking how much files are stored in this folder. If 0 the file will reload again
-        $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | select -ExpandProperty Count
+        $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | Select-Object -ExpandProperty Count
         if($File_Count -gt 0)
             {
 
@@ -551,7 +551,7 @@ function download-delltool
         cd $AppVersionDownload
 
         # Checking how much files are stored in this folder. If 0 the file will reload again
-        $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | select -ExpandProperty Count
+        $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | Select-Object -ExpandProperty Count
         if($File_Count -gt 0)
             {
 
@@ -632,7 +632,7 @@ function download-delltool
         cd $App_Folder_Main
         
         ### Delete older folder if deletion is selected
-        $FolderNameOld = Get-ChildItem | Select-Object -ExpandProperty Name
+        [Version]$FolderNameOld = Get-ChildItem | Select-Object -ExpandProperty Name
 
         foreach ($Name in $FolderNameOld)
             {
@@ -796,7 +796,7 @@ If ((Test-Path $Catalog_Name) -ne "True")
 else
     {
 
-    [datetime]$Catalog_DateLocal = Get-ItemProperty $Catalog_Name | select -ExpandProperty LastWriteTime
+    [datetime]$Catalog_DateLocal = Get-ItemProperty $Catalog_Name | Select-Object -ExpandProperty LastWriteTime
 
     }
 
