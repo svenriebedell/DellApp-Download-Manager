@@ -3,6 +3,7 @@
 ### Changelog:
 - 1.0.3  First public version
 - 1.1.0 Supporting now Trusted Device Agent and new Dell Display Manager for download by dell.com/support
+- 1.1.1   Correction Function function Download-Dell unplaned delete of folders if delete older folders is enabled.
 
 ## Description 
 
@@ -24,7 +25,7 @@ This tool is for downloading **Dell Tools** and generating a Software Repository
 - Dell PremierColor 
 - Dell Rugged Control Center 
 - Dell Trusted Device
-- Dell Display Manager (V1_0_3 supporting Display Manager V1.x / V1_1_0 supporting Display Manager V2.x)
+- Dell Display Manager (V1_0_3 supporting Display Manager V1.x / V1_1_1 supporting Display Manager V2.x)
 
 
 **Legal disclaimer: THE INFORMATION IN THIS PUBLICATION IS PROVIDED 'AS-IS.' DELL MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY KIND WITH RESPECT TO THE INFORMATION IN THIS PUBLICATION, AND SPECIFICALLY DISCLAIMS IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.** In no event shall Dell Technologies, its affiliates or suppliers, be liable for any damages whatsoever arising from or related to the information contained herein or actions that you decide to take based thereon, including any direct, indirect, incidental, consequential, loss of business profits or special damages, even if Dell Technologies, its affiliates or suppliers have been advised of the possibility of such damages. 

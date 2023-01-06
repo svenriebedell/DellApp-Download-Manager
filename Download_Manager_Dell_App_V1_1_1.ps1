@@ -1,7 +1,7 @@
 ﻿<#
 _author_ = Sven Riebe <sven_riebe@Dell.com>
 _twitter_ = @SvenRiebe
-_version_ = 1.1.0
+_version_ = 1.1.1
 _Dev_Status_ = Test
 Copyright © 2022 Dell Inc. or its subsidiaries. All Rights Reserved.
 
@@ -25,6 +25,7 @@ limitations under the License.
 1.0.2   download_log_date(yyyymmdd).xml loging details
 1.0.3   Archiving old catalog XML to a Archiving folder if a new catalog will be downloaded
 1.1.0   Add Application download for Dell Trusted Device and change Dell Display Manager download for Version 1.x to 2.x
+1.1.1   Correction Function function Download-Dell unplaned delete of folders if delete older folders is enabled.
 
 Knowing Issues
 -   If a app in catalog is changed from published to expired the deletion of this folder be script does not work anymore. 
@@ -179,7 +180,7 @@ function Download-Dell
          )
     
     #Prepare Download struture
-    cd $dest
+    Set-Location $dest
     
     If ((Test-Path $App_Folder_Main) -ne "True")
         {
@@ -187,7 +188,7 @@ function Download-Dell
         New-Item $App_Folder_Main -ItemType Directory
         }
 
-    cd $App_Folder_Main
+    Set-Location $App_Folder_Main
 
     #Prepare Download details
     $Dell_App_Select = $Catalog_DATA.SystemsManagementCatalog.SoftwareDistributionPackage | Where-Object{$_.LocalizedProperties.Title -like "$Software_Name"}
@@ -215,13 +216,13 @@ function Download-Dell
                 
                                   
                 # Checking how much files are stored in this folder. If 0 the file will reload again
-                $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | select -ExpandProperty Count
+                $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | Select-Object -ExpandProperty Count
 
                 if ($File_Count -lt 1)
                     {
             
                     New-Item $App_Folder -ItemType Directory
-                    cd $App_Folder
+                    Set-Location $App_Folder
 
                     # download files
                     Start-BitsTransfer -Source $i.InstallableItem.OriginFile.OriginUri -Destination .\ -DisplayName $i.localizedproperties.title
@@ -264,7 +265,7 @@ function Download-Dell
                     $xmlInstComm.Flush()
                     $xmlInstComm.Close()
                     
-                    cd ..
+                    Set-Location ..
                     
                     #loging informations
                     $xmlloging.WriteStartElement("Applications")
@@ -292,7 +293,7 @@ function Download-Dell
                 {
                 
                 # Checking how much files are stored in this folder. If 0 the file will reload again
-                $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | select -ExpandProperty Count
+                $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | Select-Object -ExpandProperty Count
 
                 if ($File_Count -ge 1)
                     {
@@ -378,7 +379,7 @@ function download-delltool
 
 
     ### Prepare Download struture
-    cd $dest
+    Set-Location $dest
     
     
     If ((Test-Path $App_Folder_Main) -ne $true)
@@ -390,7 +391,7 @@ function download-delltool
         }
 
 
-    cd $App_Folder_Main
+    Set-Location $App_Folder_Main
         
     ### Start InternetExplore for download Webpage informations
     $IEAuto = New-Object -ComObject InternetExplorer.Application
@@ -405,7 +406,7 @@ function download-delltool
         }
 
     ### select Download-Path inforamtion
-    $downloadTemp = $ieauto.Document.IHTMLDocument3_getElementsByTagName('a') | select href -Unique | Select-String $FileName | Select-String "dl.dell.com"
+    $downloadTemp = $ieauto.Document.IHTMLDocument3_getElementsByTagName('a') | Select-Object href -Unique | Select-String $FileName | Select-String "dl.dell.com"
     
     ### Cuting data to Download-Path
     $downloadTemp = $downloadTemp.ToString()
@@ -433,10 +434,10 @@ function download-delltool
                 
             }
 
-        cd $AppVersionDownload
+        Set-Location $AppVersionDownload
 
         # Checking how much files are stored in this folder. If 0 the file will reload again
-        $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | select -ExpandProperty Count
+        $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | Select-Object -ExpandProperty Count
         if($File_Count -gt 0)
             {
 
@@ -467,14 +468,14 @@ function download-delltool
 
             ### get installer file name for 64-Bit Version and move it to top of version folder
             $DirectoryMain = Get-ChildItem -Directory | Select-Object -ExpandProperty Name
-            cd $DirectoryMain
+            Set-Location $DirectoryMain
             $Directory64Bit = Get-ChildItem -Directory | Select-Object -ExpandProperty Name | Select-String "Win64R"
-            cd $Directory64Bit
+            Set-Location $Directory64Bit
             $fileName64Bit = Get-ChildItem | Select-Object -ExpandProperty PSChildName
 
             Move-Item $fileName64Bit -Destination $dest\$App_Folder_Main\$AppVersionDownload -Force
 
-            cd $dest\$App_Folder_Main\$AppVersionDownload
+            Set-Location $dest\$App_Folder_Main\$AppVersionDownload
 
             ### delete folder and 32-bit Version
             Remove-Item $DirectoryMain -Force -Recurse
@@ -548,10 +549,10 @@ function download-delltool
                 
             }
 
-        cd $AppVersionDownload
+        Set-Location $AppVersionDownload
 
         # Checking how much files are stored in this folder. If 0 the file will reload again
-        $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | select -ExpandProperty Count
+        $File_Count = Get-ChildItem -Path $App_Folder -Recurse | Measure-Object | Select-Object -ExpandProperty Count
         if($File_Count -gt 0)
             {
 
@@ -628,14 +629,16 @@ function download-delltool
     If ($Folder_Delete -match "Y")
         {
         
-        cd $dest
-        cd $App_Folder_Main
+        Set-Location $dest
+        Set-Location $App_Folder_Main
         
         ### Delete older folder if deletion is selected
         $FolderNameOld = Get-ChildItem | Select-Object -ExpandProperty Name
 
         foreach ($Name in $FolderNameOld)
             {
+
+            [Version]$Name = $Name
 
             if($Name -ge $File_Version)
                 {
@@ -671,7 +674,7 @@ function download-delltool
 
     $IEAuto.Quit()
 
-    cd\
+    Set-Location \
     
     }
 
@@ -785,7 +788,7 @@ $result = Invoke-WebRequest -Method HEAD -Uri $url -UseBasicParsing
 [datetime]$Catalog_DateOnline = $result.Headers.'Last-Modified'
 
 #Checking date of modified of local stored catalog files
-cd $Temp_Folder
+Set-Location $Temp_Folder
 If ((Test-Path $Catalog_Name) -ne "True")
     {
     
@@ -796,7 +799,7 @@ If ((Test-Path $Catalog_Name) -ne "True")
 else
     {
 
-    [datetime]$Catalog_DateLocal = Get-ItemProperty $Catalog_Name | select -ExpandProperty LastWriteTime
+    [datetime]$Catalog_DateLocal = Get-ItemProperty $Catalog_Name | Select-Object -ExpandProperty LastWriteTime
 
     }
 
@@ -881,7 +884,7 @@ Else
 
     # Extract Catalog XML-File form existing CAB-File
     # Change directory
-    CD $Temp_Folder
+    Set-Location $Temp_Folder
 
     # Extract DellSDPCatalogPC.xml from CAB-File
     expand $Catalog_Name . -f:$Catalog_XML
