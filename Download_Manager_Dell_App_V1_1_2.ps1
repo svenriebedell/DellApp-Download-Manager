@@ -164,6 +164,113 @@ $Catalog_Archive = $dest+"\Catalog_Archive"    # Archive folder for older catalo
 ####                                    Function Section                                              ####
 #########################################################################################################
 
+#####################################################
+#### Function preparation for Browser automation ####
+#####################################################
+
+function Create-Browser {
+    param(
+        [Parameter(mandatory=$true)][ValidateSet('Chrome','Edge','Firefox')][string]$browser,
+        [Parameter(mandatory=$false)][bool]$HideCommandPrompt = $true,
+        [Parameter(mandatory=$false)][string]$driverversion = ''
+    )
+    $driver = $null
+    
+    function Load-NugetAssembly {
+        [CmdletBinding()]
+        param(
+            [string]$url,
+            [string]$name,
+            [string]$zipinternalpath,
+            [switch]$downloadonly
+        )
+        if($psscriptroot -ne ''){
+            $localpath = join-path $psscriptroot $name
+        }else{
+            $localpath = join-path $env:TEMP $name
+        }
+        $tmp = "$env:TEMP\$([IO.Path]::GetRandomFileName())"
+        $zip = $null
+        try{
+            if(!(Test-Path $localpath)){
+                Add-Type -A System.IO.Compression.FileSystem
+                write-host "Downloading and extracting required library '$name' ... " -F Green -NoNewline
+                (New-Object System.Net.WebClient).DownloadFile($url, $tmp)
+                $zip = [System.IO.Compression.ZipFile]::OpenRead($tmp)
+                $zip.Entries | ?{$_.Fullname -eq $zipinternalpath} | %{
+                    [System.IO.Compression.ZipFileExtensions]::ExtractToFile($_,$localpath)
+                }
+	            Unblock-File -Path $localpath
+                write-host "OK" -F Green
+            }
+            if(!$downloadonly.IsPresent){
+                Add-Type -LiteralPath $localpath -EA Stop
+            }
+        
+        }catch{
+            throw "Error: $($_.Exception.Message)"
+        }finally{
+            if ($zip){$zip.Dispose()}
+            if(Test-Path $tmp){del $tmp -Force -EA 0}
+        }  
+    }
+
+    # Load Selenium Webdriver .NET Assembly
+    Load-NugetAssembly 'https://www.nuget.org/api/v2/package/Selenium.WebDriver' -name 'WebDriver.dll' -zipinternalpath 'lib/net45/WebDriver.dll' -EA Stop
+
+    if($psscriptroot -ne ''){
+        $driverpath = $psscriptroot
+    }else{
+        $driverpath = $env:TEMP
+    }
+    switch($browser){
+        'Chrome' {
+            $chrome = Get-Package -Name 'Google Chrome' -EA SilentlyContinue | select -F 1
+            if (!$chrome){
+                throw "Google Chrome Browser not installed."
+                return
+            }
+            Load-NugetAssembly "https://www.nuget.org/api/v2/package/Selenium.WebDriver.ChromeDriver/$driverversion" -name 'chromedriver.exe' -zipinternalpath 'driver/win32/chromedriver.exe' -downloadonly -EA Stop
+            # create driver service
+            $dService = [OpenQA.Selenium.Chrome.ChromeDriverService]::CreateDefaultService($driverpath)
+            # hide command prompt window
+            $dService.HideCommandPromptWindow = $HideCommandPrompt
+            # create driver object
+            $driver = New-Object OpenQA.Selenium.Chrome.ChromeDriver $dService
+        }
+        'Edge' {
+            $edge = Get-Package -Name 'Microsoft Edge' -EA SilentlyContinue | select -F 1
+            if (!$edge){
+                throw "Microsoft Edge Browser not installed."
+                return
+            }
+            Load-NugetAssembly "https://www.nuget.org/api/v2/package/Selenium.WebDriver.MSEdgeDriver/$driverversion" -name 'msedgedriver.exe' -zipinternalpath 'driver/win64/msedgedriver.exe' -downloadonly -EA Stop
+            # create driver service
+            $dService = [OpenQA.Selenium.Edge.EdgeDriverService]::CreateDefaultService($driverpath)
+            # hide command prompt window
+            $dService.HideCommandPromptWindow = $HideCommandPrompt
+            # create driver object
+            $driver = New-Object OpenQA.Selenium.Edge.EdgeDriver $dService
+        }
+        'Firefox' {
+            $ff = Get-Package -Name "Mozilla Firefox*" -EA SilentlyContinue | select -F 1
+            if (!$ff){
+                throw "Mozilla Firefox Browser not installed."
+                return
+            }
+            Load-NugetAssembly "https://www.nuget.org/api/v2/package/Selenium.WebDriver.GeckoDriver/$driverversion" -name 'geckodriver.exe' -zipinternalpath 'driver/win64/geckodriver.exe' -downloadonly -EA Stop
+            # create driver service
+            $dService = [OpenQA.Selenium.Firefox.FirefoxDriverService]::CreateDefaultService($driverpath)
+            # hide command prompt window
+            $dService.HideCommandPromptWindow = $HideCommandPrompt
+            # create driver object
+            $driver = New-Object OpenQA.Selenium.Firefox.FirefoxDriver $dService
+        }
+    }
+    return $driver
+}
+
+
 ################################################
 #### Function for SCCM Catalog Applications ####
 ################################################
