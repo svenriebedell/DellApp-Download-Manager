@@ -157,6 +157,18 @@ $Catalog_Name = "DellSDPCatalogPC.cab"
 $Catalog_XML = "DellSDPCatalogPC.xml"
 
 ################################################
+#### Names of SCCM Update Catalog Files     ####
+################################################
+
+$xPathWebpage = @(
+    [PSCustomObject]@{Name = "Trusted Device"; xPathVersion = "/html/body/div[5]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[2]/td[2]/section/div[5]/div[1]/p[2]"; xPathDownload ="/html/body/div[5]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[1]/td[6]/div/a[2]"}
+    [PSCustomObject]@{Name = "Dell Display Manager"; xPathVersion = "/html/body/div[3]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[3]/td[2]/section/div[5]/div[1]/p[2]"; xPathDownload ="/html/body/div[3]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[2]/td[6]/div/a[2]"}
+    )
+
+
+
+
+################################################
 #### Time variables                         ####
 ################################################
 $date = Get-Date -Format yyyyMMdd
@@ -164,9 +176,16 @@ $date = Get-Date -Format yyyyMMdd
 ################################################
 #### Webpages used for download             ####
 ################################################
+$downloadpages = @
+    [PSCustomObject]@{Name = "CatalogFile"; WebPath = "https://downloads.dell.com/catalog/$Catalog_Name"}
+    [PSCustomObject]@{Name = "Trusted Device"; WebPath = "https://www.dell.com/support/home/de-de/product-support/product/dell-display-peripheral-manager/drivers"}
+    [PSCustomObject]@{Name = "Dell Display Manager 2"; WebPath = "https://www.dell.com/support/home/de-de/product-support/product/dell-display-peripheral-manager/drivers}
+    )
+
 $url = "https://downloads.dell.com/catalog/$Catalog_Name"
 $url_DDM = "https://www.dell.com/support/home/de-de/product-support/product/dell-display-peripheral-manager/drivers"
-$url_DTD = "https://www.dell.com/support/home/de-de/product-support/product/trusted-device/drivers"
+$url_DTD = "https://www.dell.com/support/home/de-de/product-support/product/dell-display-peripheral-manager/drivers
+
 
 ################################################
 #### local Folders                          ####
@@ -527,10 +546,18 @@ function download-delltool
    
     # wait loading website
     Start-Sleep -Seconds 5
-    # Find download element
-    $downloadTemp = $EdgeAuto.FindElements([OpenQA.Selenium.By]::TagName("a")) | Where-Object ComputedAccessibleLabel -Like "Trusted Device Agent*"
-    # Download file
-    $downloadTemp.Click()
+
+    # get version of app from dell.com/support
+    $AppVersionOnlineTemp = ($EdgeAuto.FindElements([OpenQA.Selenium.By]::XPath("/html/body/div[3]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[3]/td[2]/section/div[5]/div[1]/p[2]")).Text).Split(",")
+    [Version]$AppVersionOnline = $AppVersionOnlineTemp[0]
+ 
+    # get download path of app from dell.com/support
+    $AppDownloadPath = $EdgeAuto.FindElements([OpenQA.Selenium.By]::XPath("/html/body/div[3]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[2]/td[6]/div/a[2]"))
+    $AppDownloadPath.click()
+
+
+
+
     # Timer for download file
     Start-Sleep -Seconds 20
     # Close Browser
@@ -539,12 +566,13 @@ function download-delltool
 
     # move file to software repository
 
-    $EdgeAuto.FindElements([OpenQA.Selenium.By]::ClassName("mb-0")) | Where-Object Text -Like "Trusted-Device*.zip" | Select-Object -ExpandProperty Text
+    
 
-    $EdgeAuto.FindElements([OpenQA.Selenium.By]::ClassName("dl-mobi-view")) | Where-Object Text -Like "*Display*" | Select-Object -ExpandProperty Text   
 
-   
-    ### check if version is still exist
+
+
+
+   ### check if version is still exist
 
     ### Get Version of Download File Dell Trusted Device
     If($FileName -eq $Trusted_Device_Name)
