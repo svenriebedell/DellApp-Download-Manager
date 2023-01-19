@@ -28,7 +28,7 @@ limitations under the License.
 1.1.1   Correction Function function Download-Dell unplaned delete of folders if delete older folders is enabled.
 1.1.2   Correction failure if no Temp folder is exist
 1.2.0   Updating Download function Dell-Download
-1.3.0   Move to selenius browser automation for download of Trusted Device / Display Manager 2.x and migrate to Array Varibles
+1.3.1   Move to selenius browser automation for download of Trusted Device / Display Manager 2.x and migrate to Array Varibles
 
 Knowing Issues
 -   If a app in catalog is changed from published to expired the deletion of this folder be script does not work anymore. 
@@ -63,20 +63,21 @@ Knowing Issues
 #### possible Value: Enabled/Disabled ####
 ##########################################
 $DownloadSoftware = @(
-    [PSCustomObject]@{Name = "Dell Command | Monitor"; UpdateStatus = $true; <#$true/$false#> Version = "10.5.1.114" <#oldest version#>; Matchcode = "*Command*Monitor*" <#identifier for catalog#>; Source = "SCCM" <#download Source#>; Foldername = "Dell Command Monitor" <#Subfoldername in Software Repository#>}
-    [PSCustomObject]@{Name = "Dell Command | Configure"; UpdateStatus = $true; Version = "4.5.0.205"; Matchcode = "*Command*Configure*"; Source = "SCCM"; Foldername = "Dell Command Configure"}
-    [PSCustomObject]@{Name = "Dell Command | Update Legacy"; UpdateStatus = $true; Version = "4.5.0"; Matchcode = "*Command*Update*"; Source = "SCCM"; Foldername = "Dell Command Update W32"}
-    [PSCustomObject]@{Name = "Dell Command | Update UWP"; UpdateStatus = $true; Version = "4.5.0"; Matchcode = "*Command*Update*Windows*"; Source = "SCCM"; Foldername = "Dell Command Update UWP"}
-    [PSCustomObject]@{Name = "Dell Digital Delivery"; UpdateStatus = $true; Version = "5.0.49.0"; Matchcode = "Dell*Digital*Delivery*"; Source = "SCCM"; Foldername = "Dell Digital Deliver"}
-    [PSCustomObject]@{Name = "Dell Optimizer"; UpdateStatus = $true; Version = "3.1.222.0"; Matchcode = "Dell Optimizer*"; Source = "SCCM"; Foldername = "Dell Optimizer"}
-    [PSCustomObject]@{Name = "Dell Power Manager"; UpdateStatus = $true; Version = "3.9"; Matchcode = "*Power*Manager*"; Source = "SCCM"; Foldername = "Dell Power Manager"}
-    [PSCustomObject]@{Name = "Dell PremierColor"; UpdateStatus = $true; Version = "6.0.152.0"; Matchcode = "Dell PremierColor*"; Source = "SCCM"; Foldername = "Dell PremierColor"}
-    [PSCustomObject]@{Name = "Dell RuggedControl Center"; UpdateStatus = $true; Version = "4.3.55.0"; Matchcode = "Dell*Rugged*Control*"; Source = "SCCM"; Foldername = "Dell Rugged Control Center"}
-    [PSCustomObject]@{Name = "Dell Trusted Device"; UpdateStatus = $false; Version = "4.11.147"; Matchcode = "*Trusted Device*"; Source = "Online"; Foldername = "Dell Trusted Device"}
-    [PSCustomObject]@{Name = "Dell Dell Display Manager Legacy"; UpdateStatus = $false; Version = "1.56.2109"; Matchcode = "*Display Manager*"; Source = "Online"; Foldername = "Dell Display Manager"}
-    [PSCustomObject]@{Name = "Dell Dell Display Manager"; UpdateStatus = $false; Version = "2.0.0.135"; Matchcode = "*Display Manager*"; Source = "Online"; Foldername = "Dell Display Manager"}
+    [PSCustomObject]@{Name = "Dell Command | Monitor"; UpdateStatus = $false; <#$true/$false#> Version = "10.5.1.114" <#oldest version#>; Matchcode = "*Command*Monitor*" <#identifier for catalog#>; Source = "SCCM" <#download Source#>; Foldername = "Dell Command Monitor" <#Subfoldername in Software Repository#>}
+    [PSCustomObject]@{Name = "Dell Command | Configure"; UpdateStatus = $false; Version = "4.5.0.205"; Matchcode = "*Command*Configure*"; Source = "SCCM"; Foldername = "Dell Command Configure"}
+    [PSCustomObject]@{Name = "Dell Command | Update Legacy"; UpdateStatus = $false; Version = "4.5.0"; Matchcode = "*Command*Update*"; Source = "SCCM"; Foldername = "Dell Command Update W32"}
+    [PSCustomObject]@{Name = "Dell Command | Update UWP"; UpdateStatus = $false; Version = "4.5.0"; Matchcode = "*Command*Update*Windows*"; Source = "SCCM"; Foldername = "Dell Command Update UWP"}
+    [PSCustomObject]@{Name = "Dell Digital Delivery"; UpdateStatus = $false; Version = "5.0.49.0"; Matchcode = "Dell*Digital*Delivery*"; Source = "SCCM"; Foldername = "Dell Digital Deliver"}
+    [PSCustomObject]@{Name = "Dell Optimizer"; UpdateStatus = $false; Version = "3.1.222.0"; Matchcode = "Dell Optimizer*"; Source = "SCCM"; Foldername = "Dell Optimizer"}
+    [PSCustomObject]@{Name = "Dell Power Manager"; UpdateStatus = $false; Version = "3.9"; Matchcode = "*Power*Manager*"; Source = "SCCM"; Foldername = "Dell Power Manager"}
+    [PSCustomObject]@{Name = "Dell PremierColor"; UpdateStatus = $false; Version = "6.0.152.0"; Matchcode = "Dell PremierColor*"; Source = "SCCM"; Foldername = "Dell PremierColor"}
+    [PSCustomObject]@{Name = "Dell RuggedControl Center"; UpdateStatus = $false; Version = "4.3.55.0"; Matchcode = "Dell*Rugged*Control*"; Source = "SCCM"; Foldername = "Dell Rugged Control Center"}
+    [PSCustomObject]@{Name = "Dell Trusted Device"; UpdateStatus = $true; Version = "4.11.147"; Matchcode = "*Trusted Device*"; Source = "Online"; Foldername = "Dell Trusted Device"}
+    [PSCustomObject]@{Name = "Dell Display Manager Legacy"; UpdateStatus = $false; Version = "1.56.2109"; Matchcode = "*Display Manager*"; Source = "Online"; Foldername = "Dell Display Manager"}
+    [PSCustomObject]@{Name = "Dell Display Manager"; UpdateStatus = $true; Version = "1.56.2109"; Matchcode = "*Display Manager*"; Source = "Online"; Foldername = "Dell Display Manager"}
     )
 
+       
 ################################################
 #### Automatically delete outdated programs ####
 ################################################
@@ -102,11 +103,10 @@ $Catalog_XML = "DellSDPCatalogPC.xml"
 ################################################
 
 $xPathWebpage = @(
-    [PSCustomObject]@{Name = "Dell Trusted Device"; xPathVersion = "/html/body/div[5]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[2]/td/section/div[5]/div[1]/p[2]"; xPathDownload ="/html/body/div[5]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[1]/td[6]/div/a[2]"}
-    [PSCustomObject]@{Name = "Dell Display Manager"; xPathVersion = "/html/body/div[3]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[3]/td[2]/section/div[5]/div[1]/p[2]"; xPathDownload ="/html/body/div[3]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[2]/td[6]/div/a[2]"}
+    [PSCustomObject]@{Name = "Dell Trusted Device"; xPathClick = "/html/body/div[5]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[1]/td[7]/button"; xPathVersion = "/html/body/div[5]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[2]/td/section/div[5]/div[1]/p[2]"; xPathDownload ="/html/body/div[5]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[1]/td[6]"}
+    [PSCustomObject]@{Name = "Dell Display Manager"; xPathClick = "/html/body/div[5]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[1]/td[7]/button"; xPathVersion = "/html/body/div[5]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[2]/td[2]/section/div[5]/div[1]/p[2]"; xPathDownload ="/html/body/div[5]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[1]/td[6]"}
     )
-
-
+    
 ################################################
 #### Time variables                         ####
 ################################################
@@ -118,7 +118,7 @@ $date = Get-Date -Format yyyyMMdd
 $downloadpages = @(
     [PSCustomObject]@{Name = "CatalogFile"; WebPath = "https://downloads.dell.com/catalog/$Catalog_Name"}
     [PSCustomObject]@{Name = "Dell Trusted Device"; WebPath = "https://www.dell.com/support/home/de-de/product-support/product/trusted-device/drivers"}
-    [PSCustomObject]@{Name = "Dell Dell Display Manager"; WebPath = "https://www.dell.com/support/home/de-de/product-support/product/dell-display-peripheral-manager/drivers"}
+    [PSCustomObject]@{Name = "Dell Display Manager"; WebPath = "https://www.dell.com/support/home/de-de/product-support/product/dell-display-peripheral-manager/drivers"}
     )
 
 ################################################
@@ -575,8 +575,6 @@ function get-SCCMSoftware
 
 
 
-
-
 ############################################################
 #### Function download with Browser on Dell.com/support ####
 ############################################################
@@ -595,7 +593,8 @@ function get-OnlineSoftware
         [Parameter(mandatory=$true)][version]$Software_Version,
         [Parameter(mandatory=$true)][string]$Browser,
         [Parameter(mandatory=$true)][string]$xPathWeb,
-        [Parameter(mandatory=$true)][string]$xPathVersion
+        [Parameter(mandatory=$true)][string]$xPathVersion,
+        [Parameter(mandatory=$true)][string]$xPathButtom
        
         )
 
@@ -622,16 +621,19 @@ function get-OnlineSoftware
     Set-Location $App_Folder_Main
         
     ### Start install selenium for download Webpage informations and files
-    $EdgeAuto = Create-Browser -browser $Browser
+    $EdgeAuto = Create-Browser -browser Edge #$Browser
     $EdgeAuto.Manage().Window.Minimize()
     $EdgeAuto.Url = $Webpage
    
     # wait stepp to be secure website is full loaded
-    Start-Sleep -Seconds 8
+    Start-Sleep -Seconds 3
 
+    #expand driver informations in browser
+    $EdgeAuto.FindElements([OpenQA.Selenium.By]::XPath($xPathButtom)).click()
     # get version of app from dell.com/support
     Write-Host "Search online for newest software version"
-    $AppVersionOnlineTemp = $EdgeAuto.FindElements([OpenQA.Selenium.By]::XPath($xPathVersion)).Text.Split(",")
+    $AppVersionOnlineTemp = ($EdgeAuto.FindElements([OpenQA.Selenium.By]::XPath($xPathVersion))).Text.Split(",")
+    #exclude Revision and store Version in format version
     [Version]$AppVersionOnline = $AppVersionOnlineTemp[0]
 
 
@@ -660,7 +662,7 @@ function get-OnlineSoftware
         {
 
         Write-Output "$App_Folder_Main $AppVersionOnline" "is existing on the to machine" 
-        Start-Sleep -Seconds 15
+        Start-Sleep -Seconds 10
         # Close Browser
         $EdgeAuto.Close()
 
@@ -675,13 +677,13 @@ function get-OnlineSoftware
         $AppDownloadPath.click()
         Write-Host "File Download is startet, please do not close the Browser"
         # wait of finializing download
-        Start-Sleep -Seconds 15
+        Start-Sleep -Seconds 10
         # Close Browser
-        $EdgeAuto.Close()
+        $EdgeAuto.close()
 
         ### handling file copy different between DTD and DDM
 
-        If ($Software_Name -eq "Dell Trusted Device")
+        If ($Software_Name -like "*Trusted Device*")
             {
             
             Set-Location $env:USERPROFILE\Downloads
@@ -711,10 +713,14 @@ function get-OnlineSoftware
             ### delete folder and 32-bit Version
             Write-Host "delete folder and 32-Bit installtion from Download directory"
             Remove-Item $DirectoryMain -Force -Recurse
-            
+
+            # xml parameter for this application install.xml
+            $Argument = "/qn REBOOT=R"
+            $RebootbyDefault = $true
+
             }
         
-        If ($Software_Name -eq "Dell Display Manager")
+        If ($Software_Name -like "*Display Manager*")
             {
             
             Set-Location $env:USERPROFILE\Downloads
@@ -727,12 +733,10 @@ function get-OnlineSoftware
             Write-Host "move 64-Installer File to $TargetFS"
             Move-Item $fileName64Bit -Destination $TargetFS -Force
 
-            Set-Location $env:USERPROFILE\Downloads
-
-            ### delete folder and 32-bit Version
-            Write-Host "delete folder and 32-Bit installtion from Download directory"
-            Remove-Item $fileName64Bit -Force -Recurse
-            
+            # xml parameter for this application install.xml
+            $Argument = '/verysilent Silent /TelemetryConsent="false" /noupdate'
+            $RebootbyDefault = $false
+           
             }
 
         
@@ -751,9 +755,9 @@ function get-OnlineSoftware
         $xmlInstComm.WriteStartElement("Application")
         $xmlInstComm.WriteStartElement("CommandLineData")
         $xmlInstComm.WriteAttributeString("Name",$App_Folder_Main)
-        $xmlInstComm.WriteAttributeString("Arguments","/qn")
+        $xmlInstComm.WriteAttributeString("Arguments",$Argument)
         $xmlInstComm.WriteAttributeString("DefaultResult","")
-        $xmlInstComm.WriteAttributeString("RebootByDefault","true")
+        $xmlInstComm.WriteAttributeString("RebootByDefault",$RebootbyDefault)
         $xmlInstComm.WriteAttributeString("Program",$fileName64Bit)
         $xmlInstComm.WriteEndElement()
         $xmlInstComm.WriteStartElement("PackageData")
@@ -877,7 +881,9 @@ foreach ($App in $DownloadSoftware)
                 $WebLink = ($downloadpages | Where-Object Name -Like $App.Name).WebPath
                 $xPathVer = ($xPathWebpage | Where-Object Name -Like $App.Name).xPathVersion
                 $xPathDown = ($xPathWebpage | Where-Object Name -Like $App.Name).xPathDownload
-                get-OnlineSoftware -Software_Name $App.Matchcode -Browser $SelectBrowser -App_Folder_Main $App.Foldername -Software_Version $App.Version -Webpage $WebLink -xPathWeb $xPathDown -xPathVersion $xPathVer
+                $xPathClick = ($xPathWebpage | Where-Object Name -Like $App.Name).xPathClick
+                get-OnlineSoftware -Software_Name $App.Matchcode -Browser $SelectBrowser -App_Folder_Main $App.Foldername -Software_Version $App.Version -Webpage $WebLink -xPathWeb $xPathDown -xPathVersion $xPathVer -xPathButtom $xPathClick
+
                 }
 
             }
