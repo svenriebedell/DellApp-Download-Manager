@@ -1,7 +1,7 @@
 <#
 _author_ = Sven Riebe <sven_riebe@Dell.com>
 _twitter_ = @SvenRiebe
-_version_ = 1.3.0
+_version_ = 1.3.1
 _Dev_Status_ = Test
 Copyright © 2022 Dell Inc. or its subsidiaries. All Rights Reserved.
 
@@ -28,24 +28,26 @@ limitations under the License.
 1.1.1   Correction Function function Download-Dell unplaned delete of folders if delete older folders is enabled.
 1.1.2   Correction failure if no Temp folder is exist
 1.2.0   Updating Download function Dell-Download
-1.3.1   Move to selenius browser automation for download of Trusted Device / Display Manager 2.x and migrate to Array Varibles
+1.3.1   Move to selenius browser automation for download of Trusted Device / Display Manager 2.x
+        migrate single Var´s to Arrays
+        integrate Dell Display Manager 1.x download
 
 Knowing Issues
 -   If a app in catalog is changed from published to expired the deletion of this folder be script does not work anymore. 
-    The reason is the function made a preselection and ingnor all expired apps the $App_Folder will be empty for this version 
+    The reason is the function made a preselection and ignore all expired apps the $App_Folder will be empty for this version 
     and deletion need to do manual.
 -   If you using Version older than 1.0.3 you need to delete the Software Repository to generate Install.XML
--   IE does not load dell.com correctly so download for display manager and trusted device need to disable
+
 
 #>
 
 <#
 .Synopsis
-   This PowerShell is checking the DellSDPCatalogPC.CAB form Https://Downloads.dell.com. This script will generated new folders and downloading Dell Tools in specific Versions direct from the Dell Support Webpage. Older Files will be ignored or if downloaded in the past the folder will be delete.
+   This PowerShell is checking the DellSDPCatalogPC.CAB form Https://Downloads.dell.com and online dell.com/support. This script will generated new folders and downloading Dell Tools in specific Versions direct from the Dell Support Webpage. Older Files will be ignored or if downloaded in the past the folder will be delete.
    IMPORTANT: This scipt need internet connection and https://downloads.dell.com need to be reachable.
    IMPORTANT: This script does not reboot the system to apply or query system.
-   IMPORTANT: Dell Display Manager / Dell Trusted Device using temporary InternetExplorer to download informations from dell.com/support (if IE not more availible it will be change to opensource solution)
-   IMPORTANT: Dell Display Manager only supported by Version 2.x and newer for Version 1.x please use version V1.0.3 of this Downloader.
+   IMPORTANT: Dell Display Manager / Dell Trusted Device using selenius browser automation to download informations from dell.com/support
+
 .DESCRIPTION
    Powershell is generate a Dell App repository managed by App Name and Version. Software downloads could be enabled by Software.
    
@@ -72,9 +74,9 @@ $DownloadSoftware = @(
     [PSCustomObject]@{Name = "Dell Power Manager"; UpdateStatus = $false; Version = "3.9"; Matchcode = "*Power*Manager*"; Source = "SCCM"; Foldername = "Dell Power Manager"}
     [PSCustomObject]@{Name = "Dell PremierColor"; UpdateStatus = $false; Version = "6.0.152.0"; Matchcode = "Dell PremierColor*"; Source = "SCCM"; Foldername = "Dell PremierColor"}
     [PSCustomObject]@{Name = "Dell RuggedControl Center"; UpdateStatus = $false; Version = "4.3.55.0"; Matchcode = "Dell*Rugged*Control*"; Source = "SCCM"; Foldername = "Dell Rugged Control Center"}
-    [PSCustomObject]@{Name = "Dell Trusted Device"; UpdateStatus = $true; Version = "4.11.147"; Matchcode = "*Trusted Device*"; Source = "Online"; Foldername = "Dell Trusted Device"}
-    [PSCustomObject]@{Name = "Dell Display Manager Legacy"; UpdateStatus = $false; Version = "1.56.2109"; Matchcode = "*Display Manager*"; Source = "Online"; Foldername = "Dell Display Manager"}
-    [PSCustomObject]@{Name = "Dell Display Manager"; UpdateStatus = $true; Version = "1.56.2109"; Matchcode = "*Display Manager*"; Source = "Online"; Foldername = "Dell Display Manager"}
+    [PSCustomObject]@{Name = "Dell Trusted Device"; UpdateStatus = $false; Version = "4.11.147"; Matchcode = "*Trusted Device*"; Source = "Online"; Foldername = "Dell Trusted Device"}
+    [PSCustomObject]@{Name = "Dell Display Manager Legacy"; UpdateStatus = $true; Version = "1.56.2109"; Matchcode = "*Display Manager*"; Source = "3rdlink"; Foldername = "Dell Display Manager Legacy"}
+    [PSCustomObject]@{Name = "Dell Display Manager"; UpdateStatus = $false; Version = "2.0.0.135"; Matchcode = "*Display Manager*"; Source = "Online"; Foldername = "Dell Display Manager"}
     )
 
        
@@ -119,6 +121,7 @@ $downloadpages = @(
     [PSCustomObject]@{Name = "CatalogFile"; WebPath = "https://downloads.dell.com/catalog/$Catalog_Name"}
     [PSCustomObject]@{Name = "Dell Trusted Device"; WebPath = "https://www.dell.com/support/home/de-de/product-support/product/trusted-device/drivers"}
     [PSCustomObject]@{Name = "Dell Display Manager"; WebPath = "https://www.dell.com/support/home/de-de/product-support/product/dell-display-peripheral-manager/drivers"}
+    [PSCustomObject]@{Name = "Dell Display Manager Legacy"; WebPath = "https://www.delldisplaymanager.com/ddmsetup.exe"}
     )
 
 ################################################
@@ -197,7 +200,7 @@ function Create-Browser {
     }
     switch($browser){
         'Chrome' {
-            $chrome = Get-Package -Name 'Google Chrome' -EA SilentlyContinue | select -F 1
+            $chrome = Get-Package -Name 'Google Chrome' -EA SilentlyContinue | select-object -F 1
             if (!$chrome){
                 throw "Google Chrome Browser not installed."
                 return
@@ -211,7 +214,7 @@ function Create-Browser {
             $driver = New-Object OpenQA.Selenium.Chrome.ChromeDriver $dService
         }
         'Edge' {
-            $edge = Get-Package -Name 'Microsoft Edge' -EA SilentlyContinue | select -F 1
+            $edge = Get-Package -Name 'Microsoft Edge' -EA SilentlyContinue | Select-Object -F 1
             if (!$edge){
                 throw "Microsoft Edge Browser not installed."
                 return
@@ -225,7 +228,7 @@ function Create-Browser {
             $driver = New-Object OpenQA.Selenium.Edge.EdgeDriver $dService
         }
         'Firefox' {
-            $ff = Get-Package -Name "Mozilla Firefox*" -EA SilentlyContinue | select -F 1
+            $ff = Get-Package -Name "Mozilla Firefox*" -EA SilentlyContinue | Select-Object -F 1
             if (!$ff){
                 throw "Mozilla Firefox Browser not installed."
                 return
@@ -678,8 +681,7 @@ function get-OnlineSoftware
         Write-Host "File Download is startet, please do not close the Browser"
         # wait of finializing download
         Start-Sleep -Seconds 10
-        # Close Browser
-        $EdgeAuto.close()
+   
 
         ### handling file copy different between DTD and DDM
 
@@ -687,56 +689,132 @@ function get-OnlineSoftware
             {
             
             Set-Location $env:USERPROFILE\Downloads
-            ### unzip Installer
-            Write-Host "unzip Dell Trusted Device File"
-            Expand-Archive .\Trusted-Device-$AppversionOnline.zip -Force
-            Start-Sleep -Seconds 5
-
-            ### delete zip from folder
-            Write-Host "delete Zip file .\Trusted-Device-$AppversionOnline.zip"
-            Remove-Item .\Trusted-Device-$AppversionOnline.zip -Force
-
-            ### get installer file name for 64-Bit Version and move it to top of version folder
-            $DirectoryMain = Get-ChildItem -Directory | Where-Object Name -EQ "Trusted-Device-$AppversionOnline" | Select-Object -ExpandProperty Name
-            Set-Location $DirectoryMain
-            $Directory64Bit = Get-ChildItem -Directory | Select-Object -ExpandProperty Name | Select-String "Win64R"
-            Set-Location $Directory64Bit
-            $fileName64Bit = Get-ChildItem | Select-Object -ExpandProperty PSChildName
-
             
-            $TargetFS = ($ENVFolder | Where-Object Name -eq "Software Repository").FSPath+"\"+$App_Folder_Main+"\"+$AppVersionOnline
-            Write-Host "move 64-Installer File to $TargetFS"
-            Move-Item $fileName64Bit -Destination $TargetFS -Force
+            #checking if download is final if not add 10 sec download time
+            $checkDownload = Test-Path -Path .\Trusted-Device-$AppversionOnline.zip
 
-            Set-Location $env:USERPROFILE\Downloads
+            If ($checkDownload -eq $true)
+                {
 
-            ### delete folder and 32-bit Version
-            Write-Host "delete folder and 32-Bit installtion from Download directory"
-            Remove-Item $DirectoryMain -Force -Recurse
+                Write-Host ".\Trusted-Device-$AppversionOnline.zip is finished to download"
 
-            # xml parameter for this application install.xml
-            $Argument = "/qn REBOOT=R"
-            $RebootbyDefault = $true
+                }
+            else 
+                {
+                
+                # download is not finished yet extand time before closing browser
+                Write-Host "Download is not finished yet, please wait"
+                Start-Sleep sec 10 
+                }
+
+            $checkDownload = Test-Path -Path .\Trusted-Device-$AppversionOnline.zip
+
+            If ($checkDownload -eq $true)
+                {
+
+                ### unzip Installer
+                Write-Host "unzip Dell Trusted Device File"
+                Expand-Archive .\Trusted-Device-$AppversionOnline.zip -Force
+                Start-Sleep -Seconds 5
+
+                ### delete zip from folder
+                Write-Host "delete Zip file .\Trusted-Device-$AppversionOnline.zip"
+                Remove-Item .\Trusted-Device-$AppversionOnline.zip -Force
+
+                ### get installer file name for 64-Bit Version and move it to top of version folder
+                $DirectoryMain = Get-ChildItem -Directory | Where-Object Name -EQ "Trusted-Device-$AppversionOnline" | Select-Object -ExpandProperty Name
+                Set-Location $DirectoryMain
+                $Directory64Bit = Get-ChildItem -Directory | Select-Object -ExpandProperty Name | Select-String "Win64R"
+                Set-Location $Directory64Bit
+                $fileName64Bit = Get-ChildItem | Select-Object -ExpandProperty PSChildName
+
+                
+                $TargetFS = ($ENVFolder | Where-Object Name -eq "Software Repository").FSPath+"\"+$App_Folder_Main+"\"+$AppVersionOnline
+                Write-Host "move 64-Installer File to $TargetFS"
+                Move-Item $fileName64Bit -Destination $TargetFS -Force
+
+                Set-Location $env:USERPROFILE\Downloads
+
+                ### delete folder and 32-bit Version
+                Write-Host "delete folder and 32-Bit installtion from Download directory"
+                Remove-Item $DirectoryMain -Force -Recurse
+
+                # xml parameter for this application install.xml
+                $Argument = "/qn REBOOT=R"
+                $RebootbyDefault = $true
+
+                # Close Browser
+                $EdgeAuto.close()
+
+
+                }
+            else 
+                {
+                
+                # download takes to long or automation does not working correctly
+                Write-Host ".\Trusted-Device-$AppversionOnline.zip is not downloaded, please check if you have a problem with internet connection or browser automation works correctly"
+                # Close Browser
+                $EdgeAuto.close()
+
+                }
+          
 
             }
         
         If ($Software_Name -like "*Display Manager*")
             {
             
-            Set-Location $env:USERPROFILE\Downloads
-            
-            ### get installer file name for 64-Bit Version and move it to top of version folder
-            $fileName64Bit = "ddmsetup.exe"
+                Set-Location $env:USERPROFILE\Downloads
 
+                # Name of file to download
+                $fileName64Bit = "ddmsetup.exe"
             
-            $TargetFS = ($ENVFolder | Where-Object Name -eq "Software Repository").FSPath+"\"+$App_Folder_Main+"\"+$AppVersionOnline
-            Write-Host "move 64-Installer File to $TargetFS"
-            Move-Item $fileName64Bit -Destination $TargetFS -Force
+                #checking if download is final if not add 10 sec download time
+                $checkDownload = Test-Path -Path .\$fileName64Bit
+    
+                If ($checkDownload -eq $true)
+                    {
+    
+                    Write-Host ".\ddmsetup.exe is finished to download"
+    
+                    }
+                else 
+                    {
+                    
+                    # download is not finished yet extand time before closing browser
+                    Write-Host "Download is not finished yet, please wait"
+                    Start-Sleep sec 10 
 
-            # xml parameter for this application install.xml
-            $Argument = '/verysilent Silent /TelemetryConsent="false" /noupdate'
-            $RebootbyDefault = $false
-           
+                    }
+    
+                $checkDownload = Test-Path -Path .\$fileName64Bit
+    
+                If ($checkDownload -eq $true)
+                    {
+                                        
+                    $TargetFS = ($ENVFolder | Where-Object Name -eq "Software Repository").FSPath+"\"+$App_Folder_Main+"\"+$AppVersionOnline
+                    Write-Host "move File ddmsetup.exe to $TargetFS"
+                    Move-Item $fileName64Bit -Destination $TargetFS -Force
+
+                    # xml parameter for this application install.xml
+                    $Argument = '/verysilent Silent /TelemetryConsent="false" /noupdate'
+                    $RebootbyDefault = $false
+    
+                    # Close Browser
+                    $EdgeAuto.close()
+    
+    
+                    }
+                else 
+                    {
+                    
+                    # download takes to long or automation does not working correctly
+                    Write-Host ".\ddmsetup.exe is not downloaded, please check if you have a problem with internet connection or browser automation works correctly"
+                    # Close Browser
+                    $EdgeAuto.close()
+    
+                    }
+          
             }
 
         
@@ -822,6 +900,218 @@ function get-OnlineSoftware
     
     }
 
+############################################################
+#### Function download delldisplaymanager.com           ####
+############################################################
+
+### Function is for Dell Display Manager 1.x
+
+function get-ddmlegacy
+    {
+
+    # Parameter
+    param(
+        [Parameter(mandatory=$true)][string]$Software_Name,
+        [Parameter(mandatory=$true)][version]$Software_Version,
+        [Parameter(mandatory=$true)][string]$App_Folder_Main
+         )
+    
+    #Prepare Download Display Manager
+    
+    #Get folder with newest version
+    Set-Location ($ENVFolder | Where-Object Name -eq "Software Repository").FSPath
+    
+    If((Test-Path $App_Folder_Main) -ne "True")
+        {
+    
+        # generate new main App Folder
+        Write-Host "$App_Folder_Main will be generate"
+        New-Item $App_Folder_Main -ItemType Directory
+
+        }
+    else 
+        {
+            "$App_Folder_Main is availible"
+        }
+        
+    Set-Location $App_Folder_Main
+    
+    #checking Online Page date
+    Write-Host "Checking File status on Webpage"
+    $url_DDM = ($downloadpages | Where-Object name -EQ "Dell Display Manager Legacy").WebPath
+    $DDMPageCheck = Invoke-WebRequest -Method HEAD -Uri $url_DDM -UseBasicParsing
+    [datetime]$DDMPageDate = $DDMPageCheck.Headers.'Last-Modified'
+        
+    #Checking Subfolder looking for the newest Software version folder and select folder name
+    $App_Folder = @(Get-ChildItem -Directory | Sort-Object -Descending name | Select-Object -ExpandProperty Name)
+
+    # Checking how much files are stored in this folder. If 0 the file will reload again
+    $File_Count = Get-ChildItem -Path $App_Folder[0] -Recurse | Measure-Object | Select-Object -ExpandProperty Count
+
+    If ($File_Count -lt 1)
+        {
+        Write-Host "No old files availible"
+        # fill var $DDMFileCheck with a date to surpres any script warning. Using webpage date -1 day to secure it will run trought download part.
+        [datetime]$DDMFileCheck = $DDMPageDate.AddDays(-1)
+
+        }
+    
+    Else
+        {
+        
+        #checking file date       
+        [datetime]$DDMFileCheck = (Get-ChildItem -Path $App_Folder[0] -File | Select-Object -ExpandProperty LastWriteTime)[0]
+        
+        }
+    
+    
+
+    If ($DDMPageDate -gt $DDMFileCheck)
+        {
+        Write-Host "Newer ddmsetup.exe is availible starting download"
+        #Download installer from delldisplaymanager.com
+        Start-BitsTransfer -Source $url_DDM -Destination ($ENVfolder | Where-Object Name -eq "Temporary Folder").FSPath -DisplayName $Software_Name
+
+        $DDM_Temp_Version = $($ENVfolder | Where-Object Name -eq "Temporary Folder").FSPath+"\ddmsetup.exe"
+        $DDM_Temp_Version = ((Get-Item $DDM_Temp_Version | Select-Object -ExpandProperty Versioninfo).ProductVersion -split" ")[0]
+        [Version]$DDM_Version = $DDM_Temp_Version
+            
+        #Prepare Download struture
+        Set-Location ($ENVFolder | Where-Object Name -eq "Software Repository").FSPath
+    
+        If((Test-Path $App_Folder_Main) -ne "True")
+            {
+        
+            # generate new main App Folder
+            Write-Host "$App_Folder_Main will be generate"
+            New-Item $App_Folder_Main -ItemType Directory
+
+            }
+        else 
+            {
+                "$App_Folder_Main is availible"
+            }
+
+        Set-Location $App_Folder_Main
+  
+
+        #Make subfolder structure and move file
+        If ((Test-Path $DDM_Version) -ne "True")
+            {
+            # generate new main software folder
+            Write-Host "$DDM_Version will be generate"
+            New-Item $DDM_Version -ItemType Directory
+            }
+        else 
+            {
+                "Folder $DDM_Version is availible"
+            }
+    
+        #Source and destiontion string prepare
+        $DDM_Source = ($ENVfolder | Where-Object Name -eq "Temporary Folder").FSPath+"\ddmsetup.exe"
+        $DDM_Destination = ($ENVFolder | Where-Object Name -eq "Software Repository").FSPath+"\"+$App_Folder_Main+"\"+$DDM_Version+"\ddmsetup.exe"
+    
+        #move file to repository
+        Write-Host "Move file ddmsetup.exe from $DDM_Source to $DDM_Destination"  
+        Move-Item $DDM_Source -Destination $DDM_Destination -Force
+
+        
+        #generate a XML with install instructions selected of Dell SCCM catalog file
+        $XMLInstallFile = ($ENVFolder | Where-Object Name -eq "Software Repository").FSPath+"\"+$App_Folder_Main+"\"+$DDM_Version+"\Install.xml"
+        $xmlInstComm = New-Object System.Xml.XmlTextWriter($XMLInstallFile,$null)
+        #Formating XML File
+        $xmlInstComm.Formatting = "Indented"
+        $xmlInstComm.Indentation = "1"
+        $xmlInstComm.IndentChar = "`t"
+
+        #writing datas
+        $xmlInstComm.WriteStartDocument()
+        $xmlInstComm.WriteStartElement("InstallInformations")
+        $xmlInstComm.WriteStartElement("Application")
+        $xmlInstComm.WriteStartElement("CommandLineData")
+        $xmlInstComm.WriteAttributeString("Name",$DDM_Name_New)
+        $xmlInstComm.WriteAttributeString("Arguments","/verysilent /noupdate")
+        $xmlInstComm.WriteAttributeString("DefaultResult","")
+        $xmlInstComm.WriteAttributeString("RebootByDefault","false")
+        $xmlInstComm.WriteAttributeString("Program",$DDM_Name_New)
+        $xmlInstComm.WriteEndElement()
+        $xmlInstComm.WriteStartElement("PackageData")
+        $xmlInstComm.WriteAttributeString("VendorName","Dell Inc.")
+        $xmlInstComm.WriteAttributeString("CreationDate",$DDMFileCheck)
+        $xmlInstComm.WriteAttributeString("PackageID","")
+        $xmlInstComm.WriteAttributeString("InfoURL","https://www.dell.com/support/kbdoc/en-us/000060112/what-is-dell-display-manager?lwp=rt")
+        $xmlInstComm.WriteEndElement()
+        $xmlInstComm.WriteStartElement("UpdateData")
+        $xmlInstComm.WriteAttributeString("Severity","")
+        $xmlInstComm.WriteAttributeString("DriverID","")
+        $xmlInstComm.WriteAttributeString("DownloadLink",$url_DDM)
+        $xmlInstComm.WriteAttributeString("Modified",$DDMFileCheck)
+        $xmlInstComm.WriteEndElement()
+                               
+        $xmlInstComm.WriteEndElement()
+        
+        #Close Document and delete buffer
+        $xmlInstComm.WriteEndDocument()
+        $xmlInstComm.Flush()
+        $xmlInstComm.Close()
+
+        }
+    Else
+        {
+        
+        Write-Output "Dell Display Manager no newer version is online"
+
+        }
+    
+    #Delete older Version of DDM
+
+    If ($Folder_Delete -match "Y")
+        {
+
+        foreach ($i in $App_Folder)
+            {
+
+            If ($i -lt $DDM_Version)
+
+                {
+
+                Remove-Item $i -Recurse -Force
+                Write-Output "Folder $i is delete now because is outdate Version"
+
+                #loging informations
+                $xmlloging.WriteStartElement("Applications")
+                $xmlloging.WriteAttributeString("Name","Dell Display Manager")
+                $xmlloging.WriteAttributeString("Version",$App_Folder)
+                $xmlloging.WriteAttributeString("Status","delete")
+                $xmlloging.WriteEndElement()
+
+                }
+
+            Else
+                {
+
+                Write-Output "Folder $i is keep alive and still exist"
+
+
+                }
+
+            }
+            
+        }
+    Else
+        {
+
+        Write-Output "Value $Folder_Delete is N, no folders will be delete"
+
+        }
+
+                  
+    Set-Location ($ENVFolder | Where-Object Name -eq "Software Repository").FSPath
+    
+
+    }
+
+
  
 
 #########################################################################################################
@@ -867,15 +1157,16 @@ foreach ($App in $DownloadSoftware)
 
             if ($app.Source -eq "SCCM")
                 {
-    
+                Write-Host "#####################################################"
                 Write-Host "############### starting update by SCCM catalog process for $App.Name ##################"
                 get-SCCMSoftware -Software_Name $App.Matchcode -Software_Version $App.Version -App_Folder_Main $App.Foldername
     
                 }
-            else 
             
+            if ($app.Source -eq "Online")
                 {
-                
+                # for Trusted Device and New Display manager
+                Write-Host "#####################################################"
                 Write-Host "################## starting update by dell.com/support process for $App.Name #####################"
                 Write-Host "## Please do not close the Browser he will be closed after download automatically ##"
                 $WebLink = ($downloadpages | Where-Object Name -Like $App.Name).WebPath
@@ -886,12 +1177,24 @@ foreach ($App in $DownloadSoftware)
 
                 }
 
+            else 
+                {
+                # for legacy Display manager
+                Write-Host "#####################################################"
+                Write-Host "############### starting update by https://delldisplaymanager.com process for $App.Name ##################"
+                get-ddmlegacy -Software_Name $App.Matchcode -Software_Version $App.Version -App_Folder_Main $App.Foldername
+
+                }
+
             }
         else 
             {
+            
+            Write-Host "#####################################################"
             Write-Host "################## Update deactivate for $App.Name #####################"
             Write-Host "App is disabled to get Updates"
             Write-Host "#####################################################"
+            
             }
 
 
