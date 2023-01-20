@@ -3,7 +3,7 @@ _author_ = Sven Riebe <sven_riebe@Dell.com>
 _twitter_ = @SvenRiebe
 _version_ = 1.3.1
 _Dev_Status_ = Test
-Copyright © 2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+Copyright © 2023 Dell Inc. or its subsidiaries. All Rights Reserved.
 
 No implied support and test in test environment/device before using in any production environment.
 
@@ -65,18 +65,18 @@ Knowing Issues
 #### possible Value: Enabled/Disabled ####
 ##########################################
 $DownloadSoftware = @(
-    [PSCustomObject]@{Name = "Dell Command | Monitor"; UpdateStatus = $false; <#$true/$false#> Version = "10.5.1.114" <#oldest version#>; Matchcode = "*Command*Monitor*" <#identifier for catalog#>; Source = "SCCM" <#download Source#>; Foldername = "Dell Command Monitor" <#Subfoldername in Software Repository#>}
-    [PSCustomObject]@{Name = "Dell Command | Configure"; UpdateStatus = $false; Version = "4.5.0.205"; Matchcode = "*Command*Configure*"; Source = "SCCM"; Foldername = "Dell Command Configure"}
-    [PSCustomObject]@{Name = "Dell Command | Update Legacy"; UpdateStatus = $false; Version = "4.5.0"; Matchcode = "*Command*Update*"; Source = "SCCM"; Foldername = "Dell Command Update W32"}
-    [PSCustomObject]@{Name = "Dell Command | Update UWP"; UpdateStatus = $false; Version = "4.5.0"; Matchcode = "*Command*Update*Windows*"; Source = "SCCM"; Foldername = "Dell Command Update UWP"}
-    [PSCustomObject]@{Name = "Dell Digital Delivery"; UpdateStatus = $false; Version = "5.0.49.0"; Matchcode = "Dell*Digital*Delivery*"; Source = "SCCM"; Foldername = "Dell Digital Deliver"}
-    [PSCustomObject]@{Name = "Dell Optimizer"; UpdateStatus = $false; Version = "3.1.222.0"; Matchcode = "Dell Optimizer*"; Source = "SCCM"; Foldername = "Dell Optimizer"}
-    [PSCustomObject]@{Name = "Dell Power Manager"; UpdateStatus = $false; Version = "3.9"; Matchcode = "*Power*Manager*"; Source = "SCCM"; Foldername = "Dell Power Manager"}
-    [PSCustomObject]@{Name = "Dell PremierColor"; UpdateStatus = $false; Version = "6.0.152.0"; Matchcode = "Dell PremierColor*"; Source = "SCCM"; Foldername = "Dell PremierColor"}
-    [PSCustomObject]@{Name = "Dell RuggedControl Center"; UpdateStatus = $false; Version = "4.3.55.0"; Matchcode = "Dell*Rugged*Control*"; Source = "SCCM"; Foldername = "Dell Rugged Control Center"}
-    [PSCustomObject]@{Name = "Dell Trusted Device"; UpdateStatus = $false; Version = "4.11.147"; Matchcode = "*Trusted Device*"; Source = "Online"; Foldername = "Dell Trusted Device"}
+    [PSCustomObject]@{Name = "Dell Command | Monitor"; UpdateStatus = $true; <#$true/$false#> Version = "10.5.1.114" <#oldest version#>; Matchcode = "*Command*Monitor*" <#identifier for catalog#>; Source = "SCCM" <#download Source#>; Foldername = "Dell Command Monitor" <#Subfoldername in Software Repository#>}
+    [PSCustomObject]@{Name = "Dell Command | Configure"; UpdateStatus = $true; Version = "4.5.0.205"; Matchcode = "*Command*Configure*"; Source = "SCCM"; Foldername = "Dell Command Configure"}
+    [PSCustomObject]@{Name = "Dell Command | Update Legacy"; UpdateStatus = $true; Version = "4.5.0"; Matchcode = "*Command*Update*"; Source = "SCCM"; Foldername = "Dell Command Update W32"}
+    [PSCustomObject]@{Name = "Dell Command | Update UWP"; UpdateStatus = $true; Version = "4.5.0"; Matchcode = "*Command*Update*Windows*"; Source = "SCCM"; Foldername = "Dell Command Update UWP"}
+    [PSCustomObject]@{Name = "Dell Digital Delivery"; UpdateStatus = $true; Version = "5.0.49.0"; Matchcode = "Dell*Digital*Delivery*"; Source = "SCCM"; Foldername = "Dell Digital Deliver"}
+    [PSCustomObject]@{Name = "Dell Optimizer"; UpdateStatus = $true; Version = "3.1.222.0"; Matchcode = "Dell Optimizer*"; Source = "SCCM"; Foldername = "Dell Optimizer"}
+    [PSCustomObject]@{Name = "Dell Power Manager"; UpdateStatus = $true; Version = "3.9"; Matchcode = "*Power*Manager*"; Source = "SCCM"; Foldername = "Dell Power Manager"}
+    [PSCustomObject]@{Name = "Dell PremierColor"; UpdateStatus = $true; Version = "6.0.152.0"; Matchcode = "Dell PremierColor*"; Source = "SCCM"; Foldername = "Dell PremierColor"}
+    [PSCustomObject]@{Name = "Dell RuggedControl Center"; UpdateStatus = $true; Version = "4.3.55.0"; Matchcode = "Dell*Rugged*Control*"; Source = "SCCM"; Foldername = "Dell Rugged Control Center"}
+    [PSCustomObject]@{Name = "Dell Trusted Device"; UpdateStatus = $true; Version = "4.11.147"; Matchcode = "*Trusted Device*"; Source = "Online"; Foldername = "Dell Trusted Device"}
     [PSCustomObject]@{Name = "Dell Display Manager Legacy"; UpdateStatus = $true; Version = "1.56.2109"; Matchcode = "*Display Manager*"; Source = "3rdlink"; Foldername = "Dell Display Manager Legacy"}
-    [PSCustomObject]@{Name = "Dell Display Manager"; UpdateStatus = $false; Version = "2.0.0.135"; Matchcode = "*Display Manager*"; Source = "Online"; Foldername = "Dell Display Manager"}
+    [PSCustomObject]@{Name = "Dell Display Manager"; UpdateStatus = $true; Version = "2.0.0.135"; Matchcode = "*Display Manager*"; Source = "Online"; Foldername = "Dell Display Manager"}
     )
 
        
