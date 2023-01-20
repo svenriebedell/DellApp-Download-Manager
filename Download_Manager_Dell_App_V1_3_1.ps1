@@ -665,7 +665,7 @@ function get-OnlineSoftware
         {
 
         Write-Output "$App_Folder_Main $AppVersionOnline" "is existing on the to machine" 
-        Start-Sleep -Seconds 10
+       
         # Close Browser
         $EdgeAuto.Close()
 
@@ -704,7 +704,7 @@ function get-OnlineSoftware
                 
                 # download is not finished yet extand time before closing browser
                 Write-Host "Download is not finished yet, please wait"
-                Start-Sleep sec 10 
+                Start-Sleep -Seconds 10 
                 }
 
             $checkDownload = Test-Path -Path .\Trusted-Device-$AppversionOnline.zip
