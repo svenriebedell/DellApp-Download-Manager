@@ -783,7 +783,7 @@ function get-OnlineSoftware
                     
                     # download is not finished yet extand time before closing browser
                     Write-Host "Download is not finished yet, please wait"
-                    Start-Sleep sec 10 
+                    Start-Sleep -Seconds 10 
 
                     }
     
@@ -1182,7 +1182,7 @@ foreach ($App in $DownloadSoftware)
                 # for legacy Display manager
                 Write-Host "#####################################################"
                 Write-Host "############### starting update by https://delldisplaymanager.com process for $App.Name ##################"
-                get-ddmlegacy -Software_Name $App.Matchcode -Software_Version $App.Version -App_Folder_Main $App.Foldername
+                get-ddmlegacy -Software_Name $App.name -Software_Version $App.Version -App_Folder_Main $App.Foldername
 
                 }
 
