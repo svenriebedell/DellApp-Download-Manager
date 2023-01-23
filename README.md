@@ -102,13 +102,13 @@ You can make a decision which application you want to maintain and what should b
 <img width="890" alt="2023-01-23_10-23-19" src="https://user-images.githubusercontent.com/99394991/214078892-476c2c64-4234-4f1e-95e6-e277005a4c06.png">
 
 
-#### **Website for Download Trusted Device and Display Manager 2.x** line 148 - 150
+#### **Website for Download Catalog/Dell Display Manager 1.x/2.x and Dell Trusted Device** line 121 - 124
 
-![image](https://user-images.githubusercontent.com/99394991/196471174-89a22c75-5519-479e-936a-cb27f6c005aa.png)
+<img width="1032" alt="2023-01-23_16-28-00" src="https://user-images.githubusercontent.com/99394991/214079706-10d1f407-2f4f-4620-a4fa-64efb95415c5.png">
 
 
  
-### Logging 
+### Logging (at Version 1.3.1 temporary disabled logging in terminal directly)
 
 The script is logging to Temp Folder. The logging file will show the following informations:
 
