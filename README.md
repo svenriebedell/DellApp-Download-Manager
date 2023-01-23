@@ -4,10 +4,15 @@
 - 1.0.3  First public version
 - 1.1.0 Supporting now Trusted Device Agent and new Dell Display Manager for download by dell.com/support
 - 1.1.1   Correction Function function Download-Dell unplaned delete of folders if delete older folders is enabled.
+- 1.1.2   Correction failure if no Temp folder is exist
+- 1.2.0   Updating Download function Dell-Download
+- 1.3.1   Move to selenius browser automation for download of Trusted Device / Display Manager 2.x
+          migrate single Var´s to Arrays
+          integrate Dell Display Manager 1.x download
 
 ## Description 
 
-This tool is for downloading **Dell Tools** and generating a Software Repository which could be later used for software packaging or other installation processes. I have written this script to maintaining my Testlab´s for VMware Workspace One and Microsoft Endpoint Manager. My further ideas is to using API´s of Workspace One and Microsoft Endpoint Manager to upload these Applications directly to theses console´s. 
+This tool is for downloading **Dell Tools** and generating a Software Repository which could be later used for software packaging or other installation processes. I have written this script to maintaining my Testlab´s for VMware Workspace One and Microsoft Intune. My further ideas is to using API´s of Workspace One and Microsoft Endpoint Manager to upload these Applications directly to theses console´s. The most Applications will be maintained by the Dell SCCM Update Catalog, the following Applications are not included in this catalog Dell Trusted Device Agent, Dell Display Manager 1.x and Dell Display Manager 2.x. These Application will be maintain in a experimental project based on web automation by selenium. The selenium automation is tested with Microsoft Edge.
 
 
 ![DCE211D3-C1E2-4604-8900-46D2BC2692EE](https://user-images.githubusercontent.com/99394991/196415769-6c3bb70b-1612-478b-8147-69affc89d59d.GIF)
@@ -25,7 +30,7 @@ This tool is for downloading **Dell Tools** and generating a Software Repository
 - Dell PremierColor 
 - Dell Rugged Control Center 
 - Dell Trusted Device
-- Dell Display Manager (V1_0_3 supporting Display Manager V1.x / V1_1_1 supporting Display Manager V2.x)
+- Dell Display Manager 1.x and 2.x
 
 
 **Legal disclaimer: THE INFORMATION IN THIS PUBLICATION IS PROVIDED 'AS-IS.' DELL MAKES NO REPRESENTATIONS OR WARRANTIES OF ANY KIND WITH RESPECT TO THE INFORMATION IN THIS PUBLICATION, AND SPECIFICALLY DISCLAIMS IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.** In no event shall Dell Technologies, its affiliates or suppliers, be liable for any damages whatsoever arising from or related to the information contained herein or actions that you decide to take based thereon, including any direct, indirect, incidental, consequential, loss of business profits or special damages, even if Dell Technologies, its affiliates or suppliers have been advised of the possibility of such damages. 
@@ -37,7 +42,8 @@ This script will be used for testing modifications that could have impact of run
 #### This script uses the following data points to get the relevant download links 
 
 - Dell SCCM (System Center Configuration Mgr) Update Catalog (DellSDPCatalogPC.cab) 
-- Dell Display Manager Website (delldisplaymanager.com) 
+- Dell Display Manager 1.x Website (delldisplaymanager.com)
+- Dell Trusted Device Agent / Dell Display Manager 2.x Website (dell.com/support)
 
 **Please refer to https://www.dell.com/support/kbdoc/en-us/000197092/dell-drivers-and-downloads-update-release-schedule?lang=en for more details about update cadence of the catalog used.**
 
@@ -68,7 +74,13 @@ Each 2nd Subfolder includes
 ![image](https://user-images.githubusercontent.com/99394991/167092334-32ec0c83-8b2e-47e6-a848-dfea7854f1b1.png)
 
 
-### Variables of configuration 
+### Variables of configuration
+
+You can make a decision which application you want to maintain and what should be the oldest version you want to store on disk.
+
+
+
+
 
 #### **Enable or Disable applications for download** Line 53 - 70
 
