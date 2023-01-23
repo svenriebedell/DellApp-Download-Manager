@@ -82,7 +82,7 @@ You can make a decision which application you want to maintain and what should b
 
 
 
-#### **Enable or Disable applications for download** Line 53 - 70
+#### **Enable or Disable applications for download / set Download Subfolder and define oldest Version to store ** Line 68 -79
 
 ![image](https://user-images.githubusercontent.com/99394991/196470153-7456e23e-93eb-4f15-9791-4c9c83bfc52e.png)
 
