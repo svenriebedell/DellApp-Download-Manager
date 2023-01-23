@@ -65,7 +65,7 @@ Knowing Issues
 #### possible Value: Enabled/Disabled ####
 ##########################################
 $DownloadSoftware = @(
-    [PSCustomObject]@{Name = "Dell Command | Monitor"; UpdateStatus = $true; <#$true/$false#> Version = "10.5.1.114" <#oldest version#>; Matchcode = "*Command*Monitor*" <#identifier for catalog#>; Source = "SCCM" <#download Source#>; Foldername = "Dell Command Monitor" <#Subfoldername in Software Repository#>}
+    [PSCustomObject]@{Name = "Dell Command | Monitor"; UpdateStatus = $true; Version = "10.5.1.114"; Matchcode = "*Command*Monitor*"; Source = "SCCM"; Foldername = "Dell Command Monitor"}
     [PSCustomObject]@{Name = "Dell Command | Configure"; UpdateStatus = $true; Version = "4.5.0.205"; Matchcode = "*Command*Configure*"; Source = "SCCM"; Foldername = "Dell Command Configure"}
     [PSCustomObject]@{Name = "Dell Command | Update Legacy"; UpdateStatus = $true; Version = "4.5.0"; Matchcode = "*Command*Update*"; Source = "SCCM"; Foldername = "Dell Command Update W32"}
     [PSCustomObject]@{Name = "Dell Command | Update UWP"; UpdateStatus = $true; Version = "4.5.0"; Matchcode = "*Command*Update*Windows*"; Source = "SCCM"; Foldername = "Dell Command Update UWP"}
