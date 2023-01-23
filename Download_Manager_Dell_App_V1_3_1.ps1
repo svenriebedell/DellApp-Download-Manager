@@ -1177,7 +1177,7 @@ foreach ($App in $DownloadSoftware)
 
                 }
 
-            else 
+            if ($app.Source -eq "3rdlink")
                 {
                 # for legacy Display manager
                 Write-Host "#####################################################"
