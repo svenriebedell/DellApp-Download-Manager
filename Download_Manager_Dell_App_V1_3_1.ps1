@@ -704,7 +704,7 @@ function get-OnlineSoftware
                 
                 # download is not finished yet extand time before closing browser
                 Write-Host "Download is not finished yet, please wait"
-                Start-Sleep -Seconds 10 
+                Start-Sleep -Seconds 15 
                 }
 
             $checkDownload = Test-Path -Path .\Trusted-Device-$AppversionOnline.zip
@@ -783,7 +783,7 @@ function get-OnlineSoftware
                     
                     # download is not finished yet extand time before closing browser
                     Write-Host "Download is not finished yet, please wait"
-                    Start-Sleep -Seconds 10 
+                    Start-Sleep -Seconds 15
 
                     }
     
