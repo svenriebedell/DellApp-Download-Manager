@@ -78,13 +78,10 @@ Each 2nd Subfolder includes
 
 You can make a decision which application you want to maintain and what should be the oldest version you want to store on disk.
 
-![image](https://user-images.githubusercontent.com/99394991/214081292-5388c092-20b7-4040-a9ea-1c37e39dabf0.png)
-
-
-
 #### **Enable or Disable applications for download / set Download Subfolder and define oldest Version to store ** Line 68 -79
 
-![image](https://user-images.githubusercontent.com/99394991/196470153-7456e23e-93eb-4f15-9791-4c9c83bfc52e.png)
+![image](https://user-images.githubusercontent.com/99394991/214081635-0177baa7-90a8-46b4-9409-be481aa8c212.png)
+
 
 
 
@@ -106,6 +103,9 @@ You can make a decision which application you want to maintain and what should b
 
 <img width="1032" alt="2023-01-23_16-28-00" src="https://user-images.githubusercontent.com/99394991/214079706-10d1f407-2f4f-4620-a4fa-64efb95415c5.png">
 
+**This applications using a broswer automation for downloading the installer files** (tested with Edpe only)
+
+![image](https://user-images.githubusercontent.com/99394991/214081836-d66e1b70-2db6-4b62-ad87-4819d4e8d190.png)
 
  
 ### Logging (at Version 1.3.1 temporary disabled logging in terminal directly)
