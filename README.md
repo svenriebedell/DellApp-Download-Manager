@@ -78,7 +78,7 @@ Each 2nd Subfolder includes
 
 You can make a decision which application you want to maintain and what should be the oldest version you want to store on disk.
 
-
+![image](https://user-images.githubusercontent.com/99394991/214081292-5388c092-20b7-4040-a9ea-1c37e39dabf0.png)
 
 
 
@@ -88,9 +88,9 @@ You can make a decision which application you want to maintain and what should b
 
 
 
-#### **Delete old downloaded Folders** Line 79
+#### **Delete old downloaded Folders** Line 90
 
-![image](https://user-images.githubusercontent.com/99394991/196470405-fdb2eeae-552b-4450-9688-b2f502ec1228.png)
+![image](https://user-images.githubusercontent.com/99394991/214080952-676d902d-2099-426c-bb77-f063290d17c6.png)
 
 
 **Note** works only if Application is NOT .PublicationsState "Expired" in the catalog
