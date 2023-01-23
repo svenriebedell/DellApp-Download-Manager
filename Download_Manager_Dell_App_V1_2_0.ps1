@@ -1,7 +1,7 @@
 ﻿<#
 _author_ = Sven Riebe <sven_riebe@Dell.com>
 _twitter_ = @SvenRiebe
-_version_ = 1.1.2
+_version_ = 1.2.0
 _Dev_Status_ = Test
 Copyright © 2022 Dell Inc. or its subsidiaries. All Rights Reserved.
 
@@ -27,6 +27,7 @@ limitations under the License.
 1.1.0   Add Application download for Dell Trusted Device and change Dell Display Manager download for Version 1.x to 2.x
 1.1.1   Correction Function function Download-Dell unplaned delete of folders if delete older folders is enabled.
 1.1.2   Correction failure if no Temp folder is exist
+1.2.0   Move to selenius browser automation for download of Trusted Device / Display Manager 2.x
 
 Knowing Issues
 -   If a app in catalog is changed from published to expired the deletion of this folder be script does not work anymore. 
@@ -60,6 +61,21 @@ Knowing Issues
 ########################################## 
 #### possible Value: Enabled/Disabled ####
 ##########################################
+$DownloadSoftware = @(
+    [PSCustomObject]@{Name = "Dell Command | Monitor"; UpdateStatus = $true; Version = "10.5.1.114"}
+    [PSCustomObject]@{Name = "Dell Command | Configure"; UpdateStatus = $true; Version = "4.5.0.205"}
+    [PSCustomObject]@{Name = "Dell Command | Update Legacy"; UpdateStatus = $true; Version = "4.5"}
+    [PSCustomObject]@{Name = "Dell Command | Update UWP"; UpdateStatus = $true; Version = "4.5"}
+    [PSCustomObject]@{Name = "Dell Digital Delivery"; UpdateStatus = $true; Version = "4.0.92.0"}
+    [PSCustomObject]@{Name = "Dell Optimizer"; UpdateStatus = $true; Version = "4.5"}
+    [PSCustomObject]@{Name = "Dell Power Manager"; UpdateStatus = $true; Version = "4.5"}
+    [PSCustomObject]@{Name = "Dell PremierColor"; UpdateStatus = $true; Version = "4.3.55.0"}
+    [PSCustomObject]@{Name = "Dell RuggedControl Center"; UpdateStatus = $true; Version = "4.3.55.0"}
+    [PSCustomObject]@{Name = "Dell Trusted Device"; UpdateStatus = $true; Version = "4.5"}
+    [PSCustomObject]@{Name = "Dell Dell Display Manager Legacy"; UpdateStatus = $true; Version = "1.5"}
+    [PSCustomObject]@{Name = "Dell Dell Display Manager"; UpdateStatus = $true; Version = "2.0"}
+    )
+
 $Command_Monitor = "Enabled"
 $Command_Configure = "Enabled"
 $Command_Update_Legacy = "Enabled"
@@ -141,6 +157,18 @@ $Catalog_Name = "DellSDPCatalogPC.cab"
 $Catalog_XML = "DellSDPCatalogPC.xml"
 
 ################################################
+#### Names of SCCM Update Catalog Files     ####
+################################################
+
+$xPathWebpage = @(
+    [PSCustomObject]@{Name = "Trusted Device"; xPathVersion = "/html/body/div[5]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[2]/td[2]/section/div[5]/div[1]/p[2]"; xPathDownload ="/html/body/div[5]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[1]/td[6]/div/a[2]"}
+    [PSCustomObject]@{Name = "Dell Display Manager"; xPathVersion = "/html/body/div[3]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[3]/td[2]/section/div[5]/div[1]/p[2]"; xPathDownload ="/html/body/div[3]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[2]/td[6]/div/a[2]"}
+    )
+
+
+
+
+################################################
 #### Time variables                         ####
 ################################################
 $date = Get-Date -Format yyyyMMdd
@@ -148,9 +176,16 @@ $date = Get-Date -Format yyyyMMdd
 ################################################
 #### Webpages used for download             ####
 ################################################
+$downloadpages = @
+    [PSCustomObject]@{Name = "CatalogFile"; WebPath = "https://downloads.dell.com/catalog/$Catalog_Name"}
+    [PSCustomObject]@{Name = "Trusted Device"; WebPath = "https://www.dell.com/support/home/de-de/product-support/product/dell-display-peripheral-manager/drivers"}
+    [PSCustomObject]@{Name = "Dell Display Manager 2"; WebPath = "https://www.dell.com/support/home/de-de/product-support/product/dell-display-peripheral-manager/drivers}
+    )
+
 $url = "https://downloads.dell.com/catalog/$Catalog_Name"
 $url_DDM = "https://www.dell.com/support/home/de-de/product-support/product/dell-display-peripheral-manager/drivers"
-$url_DTD = "https://www.dell.com/support/home/de-de/product-support/product/trusted-device/drivers"
+$url_DTD = "https://www.dell.com/support/home/de-de/product-support/product/dell-display-peripheral-manager/drivers
+
 
 ################################################
 #### local Folders                          ####
@@ -166,6 +201,8 @@ $Catalog_Archive = $dest+"\Catalog_Archive"    # Archive folder for older catalo
 
 #####################################################
 #### Function preparation for Browser automation ####
+#### SOURCE:                                     ####
+#### https://administrator.de/tutorial/powershell-einfuehrung-in-die-webbrowser-automation-mit-selenium-webdriver-1197173647.html ####
 #####################################################
 
 function Create-Browser {
@@ -503,28 +540,39 @@ function download-delltool
     Set-Location $App_Folder_Main
         
     ### Start InternetExplore for download Webpage informations
-    $IEAuto = New-Object -ComObject InternetExplorer.Application
-    $IEAuto.Visible = $false
-    $IEAuto.Navigate($Webpage)
+    $EdgeAuto = Create-Browser -browser Edge
+    $EdgeAuto.Manage().Window.Minimize()
+    $EdgeAuto.Url = "https://www.dell.com/support/home/de-de/product-support/product/trusted-device/drivers"             #$Webpage
+   
+    # wait loading website
+    Start-Sleep -Seconds 5
 
-    while($IEAuto.Busy -eq $true)
-        {
-            Write-Host "Browser is busy"
-            Start-Sleep -Seconds 15
+    # get version of app from dell.com/support
+    $AppVersionOnlineTemp = ($EdgeAuto.FindElements([OpenQA.Selenium.By]::XPath("/html/body/div[3]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[3]/td[2]/section/div[5]/div[1]/p[2]")).Text).Split(",")
+    [Version]$AppVersionOnline = $AppVersionOnlineTemp[0]
+ 
+    # get download path of app from dell.com/support
+    $AppDownloadPath = $EdgeAuto.FindElements([OpenQA.Selenium.By]::XPath("/html/body/div[3]/div/div[4]/div[1]/div[8]/div[2]/div[2]/div/section[1]/div/div[2]/div[8]/div[1]/table/tbody/tr[2]/td[6]/div/a[2]"))
+    $AppDownloadPath.click()
 
-        }
 
-    ### select Download-Path inforamtion
-    $downloadTemp = $ieauto.Document.IHTMLDocument3_getElementsByTagName('a') | Select-Object href -Unique | Select-String $FileName | Select-String "dl.dell.com"
+
+
+    # Timer for download file
+    Start-Sleep -Seconds 20
+    # Close Browser
+    $EdgeAuto.Close()
+    $EdgeAuto.Quit
+
+    # move file to software repository
+
     
-    ### Cuting data to Download-Path
-    $downloadTemp = $downloadTemp.ToString()
-    $downloadTemp = $downloadTemp.TrimEnd('}')
-    $downloadTemp = $downloadTemp.Split("=")
-    $downloadPath = $downloadTemp[1]
 
-    
-    ### check if version is still exist
+
+
+
+
+   ### check if version is still exist
 
     ### Get Version of Download File Dell Trusted Device
     If($FileName -eq $Trusted_Device_Name)
