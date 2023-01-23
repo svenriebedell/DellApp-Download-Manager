@@ -86,10 +86,6 @@ You can make a decision which application you want to maintain and what should b
 
 ![image](https://user-images.githubusercontent.com/99394991/196470153-7456e23e-93eb-4f15-9791-4c9c83bfc52e.png)
 
- 
-#### **starting download version equal or newer** Line 90 - 100 
-
-![image](https://user-images.githubusercontent.com/99394991/196470464-7e2ece5a-f113-4c28-a8f9-7f897fa0c7ec.png)
 
 
 #### **Delete old downloaded Folders** Line 79
@@ -101,9 +97,10 @@ You can make a decision which application you want to maintain and what should b
 
 ![image](https://user-images.githubusercontent.com/99394991/167109524-ef6b66a3-1da3-4619-91d6-0082f8320e81.png)
  
-#### **Temp and Repository Folder** Line 155 - 157 
+#### **Temp, Archive and Repository Folder** Line 131 -133
 
-![image](https://user-images.githubusercontent.com/99394991/196470768-ad04e6cf-58f9-4f91-addf-94c9a7fa1ae1.png)
+<img width="890" alt="2023-01-23_10-23-19" src="https://user-images.githubusercontent.com/99394991/214078892-476c2c64-4234-4f1e-95e6-e277005a4c06.png">
+
 
 #### **Website for Download Trusted Device and Display Manager 2.x** line 148 - 150
 
