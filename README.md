@@ -1,4 +1,6 @@
-# DellApp-Download-Manager 
+# DellApp-Download-Manager
+
+**Newest Version:** 1.3.2
 
 ### Changelog:
 - 1.0.3  First public version
@@ -9,6 +11,7 @@
 - 1.3.1   Move to selenius browser automation for download of Trusted Device / Display Manager 2.x
           migrate single Var´s to Arrays
           integrate Dell Display Manager 1.x download
+- 1.3.2   Upddate function Get-Online and change indentify app by xPath to findelement. 
 
 ## Description 
 
