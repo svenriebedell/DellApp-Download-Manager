@@ -1,6 +1,6 @@
 # DellApp-Download-Manager
 
-**Newest Version:** 1.3.2
+**Newest Version:** 1.3.3
 
 ### Changelog:
 - 1.0.3  First public version
