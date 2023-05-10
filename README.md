@@ -14,6 +14,9 @@
 - 1.3.2   Upddate function Get-Online and change indentify app by xPath to findelement.
 - 1.3.3   Add Dell Peripheral Manager to download options.
 
+## Requirements:
+- set Dell.com as trusted domain to download software (oterwise Trusted Device, Display Manager and Peripheral Manager are blocked in worst case by Defender Smartscreen or other solutions)
+
 ## Description 
 
 This tool is for downloading **Dell Tools** and generating a Software Repository which could be later used for software packaging or other installation processes. I have written this script to maintaining my Testlab´s for VMware Workspace One and Microsoft Intune. My further ideas is to using API´s of Workspace One and Microsoft Endpoint Manager to upload these Applications directly to theses console´s. The most Applications will be maintained by the Dell SCCM Update Catalog, the following Applications are not included in this catalog Dell Trusted Device Agent, Dell Display Manager 1.x and Dell Display Manager 2.x. These Application will be maintain in a experimental project based on web automation by selenium. The selenium automation is tested with Microsoft Edge.
