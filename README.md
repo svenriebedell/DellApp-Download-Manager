@@ -1,6 +1,6 @@
 # DellApp-Download-Manager
 
-**Newest Version:** 1.3.3
+**Newest Version:** 1.3.6
 
 ### Changelog:
 - 1.0.3  First public version
@@ -13,6 +13,9 @@
           integrate Dell Display Manager 1.x download
 - 1.3.2   Upddate function Get-Online and change indentify app by xPath to findelement.
 - 1.3.3   Add Dell Peripheral Manager to download options.
+- 1.3.4   Update Trusted Device download from old .ZIP to new.EXE for new Package Format.
+- 1.3.5   Update function Create-Browser
+- 1.3.6   Dell website using wrong format for version of Display Manager 2x. filter and correct this informations now if needed
 
 ## Requirements:
 - set Dell.com as trusted domain to download software (oterwise Trusted Device, Display Manager and Peripheral Manager are blocked in worst case by Defender Smartscreen or other solutions)
