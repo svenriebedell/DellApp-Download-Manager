@@ -328,7 +328,7 @@ function get-DellCatalog {
         {
 
         # Download the catalog File newest version
-        Start-BitsTransfer -Source $url -Destination ($ENVFolder | Where-Object Name -eq "Temporary Folder").FSPath -displayname "Download Dell SCCM Catalog"
+        Start-BitsTransfer -Source $url -Destination ($ENVFolder | Where-Object Name -eq "Temporary Folder").FSPath -displayname "Download Dell SCCM Catalog" -CustomHeaders
 
         
         #checking if XML file exist in ($ENVFolder | Where-Object Name -eq "Temporary Folder").FSPath
